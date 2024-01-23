@@ -8,4 +8,4 @@ spec:
         image: nginx
       - name: centos
         image: centos:7
-        command: ["sleep", "100000"]
+        command: ["sleep", "1000"]
