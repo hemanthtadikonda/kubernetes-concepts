@@ -7,5 +7,5 @@ spec:
       -  name: nginx
          image: nginx
       -  name: cent
-         image: centos
-         command: [ "sleep", "3600" ]
+         image: rkalluru/ping:v1
+
