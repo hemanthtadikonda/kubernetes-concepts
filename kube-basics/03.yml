@@ -8,4 +8,6 @@ spec:
         image: nginx
       - name: ping
         image: rkalluru/ping:v1
-        command: ["yahoo.com"]
+        args:
+           - yahoo.com
+
