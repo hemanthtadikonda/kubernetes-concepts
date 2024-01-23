@@ -7,5 +7,5 @@ spec:
       - name: nginx
         image: nginx
       - name: centos
-        image: centos:8
+        image: centos:7
         command: ["sleep", "100000"]
