@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+   name: pod03
+spec:
+   containers:
+      - name: ping
+        image: rkalluru/ping:v1
+        imagePullPolicy: Always
