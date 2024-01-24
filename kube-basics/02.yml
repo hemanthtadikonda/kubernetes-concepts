@@ -9,3 +9,12 @@ spec:
       - name: centos
         image: centos:7
         command: ["sleep","3600"]
+
+
+### you can launch multi containers in a pod
+### Pod will ensure those can crete in "same network namespace" Hence those can communicate each other by default
+### by process wise those containers are isolated
+
+## Pause Container:
+##  Pause is a secret container that runs on every pod in Kubernetes. This container’s primary job is to keep the namespace open in case all the other containers on the pod die.
+### The 'pause' container is a container which holds the network namespace for the pod. Kubernetes creates pause containers to acquire the respective pod’s IP address and set up the network namespace for all other containers that join that pod.

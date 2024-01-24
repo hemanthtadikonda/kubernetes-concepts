@@ -8,7 +8,9 @@ spec:
         image: nginx
       - name: ping
         image: rkalluru/ping:v1
-        command: ["echo"]
+        command: ["ping","-c30"]
         args:
            - yahoo.com
 
+## command is to override CMD  in an image
+# arg:to pass arguements to ENTRYPOINT of an image

@@ -7,3 +7,7 @@ spec:
       - name: ping
         image: rkalluru/ping:v1
         imagePullPolicy: Always
+
+### Generally pod will check for image locally. If image exist it will don't go for image pull
+## imagePullPolicy: Always
+## By using this it always pull fresh image. even though image exist locally
