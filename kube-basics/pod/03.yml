@@ -9,8 +9,6 @@ spec:
       - name: ping
         image: hemanthtadikonda/ping:v1
 
-        args:
-           - yahoo.com
 
 ## command is to override CMD  in an image
 # arg:to pass arguements to ENTRYPOINT of an image
