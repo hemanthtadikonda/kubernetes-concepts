@@ -8,6 +8,7 @@ spec:
         image: nginx
       - name: ping
         image: hemanthtadikonda/ping:v1
+        imagePullPolicy: Always
 
 
 ## command is to override CMD  in an image
