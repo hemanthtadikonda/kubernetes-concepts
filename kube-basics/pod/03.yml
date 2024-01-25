@@ -8,6 +8,7 @@ spec:
         image: nginx
       - name: ping
         image: hemanthtadikonda/ping:v1
+        command: ["echo"]
         args:
            - hemanth.com
 
