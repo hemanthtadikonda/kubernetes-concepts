@@ -7,8 +7,8 @@ spec:
       - name: nginx
         image: nginx
       - name: ping
-        image: rkalluru/ping:v1
-        command: ["ping","-c30"]
+        image: hemanthtadikonda/ping:v1
+
         args:
            - yahoo.com
 
