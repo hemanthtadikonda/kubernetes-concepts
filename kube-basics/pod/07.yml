@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+   name: label-demo
+   labels:
+      team: AOD_AOM
+      business: premium
+      assignee: Hemanth
+      environment: production
+      app: nginx
+spec:
+   containers:
+      - name: nginx
+        image: nginx:1.14.2
+
+
+#### we can group the pods by applying labels to them,
+#labels can applied in pod level & support's up to 10 kb { could be short & brief }
+

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+   name: resource-limitrange
+spec:
+   limits:
+      - default: # this section defines default limits
+           cpu: 500m
+           memory: 512 MiB
+        defaultRequest: # this section defines default requests
+           cpu: 100m
+           memory: 256 MiB
+        type: Container
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+   name: resource
+spec:
+   containers:
+      - name: nginx
+        image: nginx

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+   name: env
+spec:
+   containers:
+      - name: mysql
+        image: mysql
+        env:
+           -  name: MYSQL_ROOT_PASSWORD
+              value: "root123"
+           -  name: MYSQL_ROOT_USER
+              value: "admin"
+           -  name: environment
+              value: "dev"
+---
+
+## sometimes containers required ENV's to run. those can be pass in container level env section
+
+
