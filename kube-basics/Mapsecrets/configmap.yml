@@ -105,5 +105,16 @@ spec:
                  configMapKeyRef:
                     key: APP_VERSION
                     name: proj-info
-
+---
+apiVersion: v1
+kind: Pod
+metadata:
+   name: pod02
+spec:
+   containers:
+      - name: httpd
+        image: rkalluru/k06-configmap:v1
+        envFrom:
+           configMapKeyRef:
+              name: proj-info
 ---
