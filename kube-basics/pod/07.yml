@@ -8,6 +8,8 @@ metadata:
       assignee: Hemanth
       environment: production
       app: nginx
+   annotations:
+      kubernetes.pod.annotations.label: "true"
 spec:
    containers:
       - name: nginx
@@ -16,4 +18,9 @@ spec:
 
 #### we can group the pods by applying labels to them,
 #labels can applied in pod level & support's up to 10 kb { could be short & brief }
+# kubectl get pods --show-labels
+# kubectl get pods -l "assignee=Hemanth"
+
+##** Labels can not support more than 10 bytes annotations can be helpful for provide large labels
+# annotations can be separated by .
 
