@@ -8,5 +8,24 @@ spec:
       - name: httpd
         image: rkalluru/k06-configmap:v1
         env:
-           -   name: APP_NAME
-               value: demo
+           -  name: APP_NAME
+              value: demo
+           -  name: PROJECT_NAME
+              value: demo
+           -  name: ENVIRONMENT
+              value: dev
+           -  name: CLOUD
+              value: aws
+           -  name: REGION
+              value: "us-east-1"
+           -  name: IS_VPC
+              value: "true"
+           -  name: COMPONENT
+              value: httpd
+           -  name: SOFTWARE
+              value: apache
+           -  name: SOFTWARE_VERSION
+              value: "2.1"
+           -  name: APP_VERSION
+              value: "1.0.0"
+
