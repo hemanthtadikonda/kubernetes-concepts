@@ -9,12 +9,13 @@ spec:
         image: nginx
         resources:
            requests:
-              cpu: "100m"
-              memory: "256 MiB"
+              memory: "64Mi"
+              cpu: "150m"
            limits:
-              cpu: "200m"
-              memory: "512 MiB"
+              memory: "128Mi"
+              cpu: "300m"
 ---
+
 apiVersion: v1
 kind: Pod
 metadata:
@@ -28,9 +29,44 @@ spec:
            -  "10000"
         resources:
            limits:
-              cpu: "300m"
-              memory: "512 MiB"
+              memory: "128Mi"
+              cpu: "500m"
+
 ---
+
+#---
+#apiVersion: v1
+#kind: Pod
+#metadata:
+#   name: resources01
+#spec:
+#   containers:
+#      - name: nginx
+#        image: nginx
+#        resources:
+#           requests:
+#              cpu: "100m"
+#              memory: "256 MiB"
+#           limits:
+#              cpu: "200m"
+#              memory: "512 MiB"
+#---
+#apiVersion: v1
+#kind: Pod
+#metadata:
+#   name: resources02
+#spec:
+#   containers:
+#      - name: centos
+#        image: centos:8
+#        command:
+#           -  sleep
+#           -  "10000"
+#        resources:
+#           limits:
+#              cpu: "300m"
+#              memory: "512 MiB"
+#---
 ### resources: can be applied in container level
 # Requests: the min amount of resources will take to create a container
 # Limits: the maximum amount of resources can be used by container
