@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+   name: pod01
+spec:
+   containers:
+      - name: httpd
+        image: rkalluru/k06-configmap:v1
