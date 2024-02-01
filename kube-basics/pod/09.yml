@@ -1,16 +1,39 @@
+---
 apiVersion: v1
 kind: LimitRange
 metadata:
-   name: resource-limitrange
+   name: cpu-resource-constraint
 spec:
    limits:
       - default: # this section defines default limits
-           cpu: 500m
-           memory: 512 MiB
+           cpu: "500m"
+           memory: "512Mi"
         defaultRequest: # this section defines default requests
+           cpu: "100m"
+           memory: "128Mi"
+        max: # max and min define the limit range
+           cpu: "1"
+        min:
            cpu: 100m
-           memory: 256 MiB
         type: Container
+
+
+
+
+
+#apiVersion: v1
+#kind: LimitRange
+#metadata:
+#   name: resource-limitrange
+#spec:
+#   limits:
+#      - default: # this section defines default limits
+#           cpu: 500m
+#           memory: 512Mi
+#        defaultRequest: # this section defines default requests
+#           cpu: 100m
+#           memory: 256 MiB
+#        type: Container
 
 ---
 apiVersion: v1
@@ -21,3 +44,4 @@ spec:
    containers:
       - name: nginx
         image: nginx
+---
