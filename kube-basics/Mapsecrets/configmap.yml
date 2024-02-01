@@ -115,6 +115,6 @@ spec:
       - name: httpd
         image: rkalluru/k06-configmap:v1
         envFrom:
-           configMapKeyRef:
-              name: proj-info
+           -  configMapRef:
+                 name: proj-info
 ---
