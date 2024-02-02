@@ -13,8 +13,8 @@ spec:
            - mountPath: /cache
              name: test-volume
    volumes:
-      - name: test-volume
+      -  name: test-volume
          # This Portworx volume must already exist.
-        awsElasticBlockStore:
-           volumeID: vol-02c72c6dae48e2357
-           fsType: gp2
+         awsElasticBlockStore:
+            volumeID: vol-02c72c6dae48e2357
+            fsType: gp2
