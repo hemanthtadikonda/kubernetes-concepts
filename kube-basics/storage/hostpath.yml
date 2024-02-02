@@ -5,14 +5,14 @@ metadata:
    name: hostpath-pod
 spec:
    containers:
-      - name: centos
-        image: centos:7
-        command:
-           -   sleep
-           -   "10000"
-        volumeMounts:
-           - mountPath: /cache
-             name: test-volume
+      -  image: centos:8
+         name: centos
+         command:
+            - sleep
+            - "10000"
+         volumeMounts:
+            - mountPath: /cache
+              name: test-volume
    volumes:
       - name: test-volume
          # mount /data, but only if that directory already exists
