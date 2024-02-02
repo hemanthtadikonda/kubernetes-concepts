@@ -16,5 +16,5 @@ spec:
       - name: test-volume
          # This Portworx volume must already exist.
         portworxVolume:
-           volumeID: "pxvol"
+           volumeID: "vol-02c72c6dae48e2357"
            fsType: "ext4"
