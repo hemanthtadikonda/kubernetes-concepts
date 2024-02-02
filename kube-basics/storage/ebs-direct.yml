@@ -10,7 +10,7 @@ spec:
            -   sleep
            -   "10000"
         volumeMounts:
-           - mountPath: /test-ebs
+           - mountPath: /cache
              name: test-volume
    volumes:
       - name: test-volume
