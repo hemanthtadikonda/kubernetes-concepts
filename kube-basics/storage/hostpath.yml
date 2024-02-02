@@ -17,5 +17,5 @@ spec:
       - name: test-volume
          # mount /data, but only if that directory already exists
         hostPath:
-           path: /data # directory location on host
+           path: /home/centos/data  # directory location on host
            type: Directory # this field is optional
