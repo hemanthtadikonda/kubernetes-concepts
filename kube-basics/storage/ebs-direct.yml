@@ -17,4 +17,4 @@ spec:
          # This Portworx volume must already exist.
         awsElasticBlockStore:
            volumeID: "vol-02c72c6dae48e2357"
-           fsType: ext4
+           fsType: gp2
