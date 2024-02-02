@@ -15,6 +15,6 @@ spec:
    volumes:
       - name: test-volume
          # This Portworx volume must already exist.
-        portworxVolume:
+        awsElasticBlockStore:
            volumeID: "vol-02c72c6dae48e2357"
            fsType: "gp2"
