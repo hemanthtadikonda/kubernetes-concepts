@@ -1,4 +1,19 @@
 ---
+allowVolumeExpansion: true
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+   name: my-sc
+
+parameters:
+   csi.storage.k8s.io/fstype: xfs
+   encrypted: "true"
+   type: gp2
+provisioner: ebs.csi.aws.com
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+---
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -25,9 +40,8 @@ spec:
            -   "10000"
         volumeMounts:
            - mountPath: /data
-             name: claim1
+             name: data
    volumes:
-      - name: claim1
+      - name: data
         persistentVolumeClaim:
            claimName: claim1
-
