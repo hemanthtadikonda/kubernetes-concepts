@@ -25,9 +25,9 @@ spec:
            -   "10000"
         volumeMounts:
            - mountPath: /data
-             name: claim1
+             name: data
    volumes:
-      - name: claim1
+      - name: data
         persistentVolumeClaim:
            claimName: claim1
 
