@@ -3,21 +3,19 @@ allowVolumeExpansion: true
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-   name: my-sc
-
+   name: gp3-retain
 parameters:
    csi.storage.k8s.io/fstype: xfs
    encrypted: "true"
-   type: gp2
+   type: gp3
 provisioner: ebs.csi.aws.com
-reclaimPolicy: Delete
+reclaimPolicy: Retain
 volumeBindingMode: WaitForFirstConsumer
----
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-   name: claim1
+   name: claim2
 spec:
    accessModes:
       - ReadWriteOnce
@@ -25,7 +23,7 @@ spec:
    resources:
       requests:
          storage: 1Gi
-   storageClassName: "aws-st1"
+   storageClassName: "gp3-retain"
 ---
 apiVersion: v1
 kind: Pod
@@ -39,9 +37,9 @@ spec:
            -   sleep
            -   "10000"
         volumeMounts:
-           - mountPath: /data
-             name: data
+           - mountPath: "/opt"
+             name: claim2
    volumes:
-      - name: data
+      - name: claim2
         persistentVolumeClaim:
-           claimName: claim1
+           claimName: claim2

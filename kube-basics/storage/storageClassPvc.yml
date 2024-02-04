@@ -18,13 +18,13 @@ metadata:
    name: pod-sc
 spec:
    containers:
-      - image: centos:8
+      - image: centos:7
         name: centos
         command:
            -   sleep
            -   "10000"
         volumeMounts:
-           - mountPath: /data
+           - mountPath: "/data"
              name: claim1
    volumes:
       - name: claim1
