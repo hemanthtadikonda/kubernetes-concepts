@@ -33,5 +33,5 @@ spec:
       - name: nginx
         image: nginx
    nodeSelector:
-      intensive: does-not-exist
+      intensive: memory
 ---
