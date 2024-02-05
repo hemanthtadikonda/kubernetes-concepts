@@ -11,7 +11,7 @@ spec:
       - name: nginx
         image: nginx
    nodeSelector:
-      created: hemanth
+      intensive: general
 ---
 apiVersion: v1
 kind: Pod
