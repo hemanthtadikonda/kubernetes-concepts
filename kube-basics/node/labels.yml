@@ -1,0 +1,40 @@
+
+# kubectl label nodes <node-name> intensive=general
+# kubectl label nodes <node-name> intensive=memory
+---
+apiVersion: v1
+kind: Pod
+metadata:
+   name: nginx1
+spec:
+   containers:
+      - name: nginx
+        image: nginx
+   nodeSelector:
+      intensive : general
+---
+apiVersion: v1
+kind: Pod
+metadata:
+   name: nginx
+spec:
+   containers:
+      - name: mysql
+        image: mysql
+        env:
+           -  name: MYSQL_ROOT_PASSWORD
+              value: "root123"
+   nodeSelector:
+      intensive : memory
+---
+apiVersion: v1
+kind: Pod
+metadata:
+   name: nginx2
+spec:
+   containers:
+      - name: nginx
+        image: nginx
+   nodeSelector:
+      intensive : doesn't exist
+---
