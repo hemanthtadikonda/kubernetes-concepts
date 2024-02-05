@@ -22,7 +22,7 @@ spec:
       - name: nginx
         image: nginx
    nodeSelector:
-      intensive: memory
+      intensive: general
 ---
 apiVersion: v1
 kind: Pod
