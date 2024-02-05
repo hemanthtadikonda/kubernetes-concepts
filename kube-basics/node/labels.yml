@@ -19,11 +19,8 @@ metadata:
    name: nginx
 spec:
    containers:
-      - name: mysql
-        image: mysql
-        env:
-           -  name: MYSQL_ROOT_PASSWORD
-              value: "root123"
+      - name: nginx
+        image: nginx
    nodeSelector:
       intensive : memory
 ---
