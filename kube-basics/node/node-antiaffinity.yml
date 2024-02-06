@@ -31,7 +31,6 @@ spec:
                       operator: NotIn #
                       values:
                          - memory
-                         - general
    containers:
       - name: nginx
         image: nginx
