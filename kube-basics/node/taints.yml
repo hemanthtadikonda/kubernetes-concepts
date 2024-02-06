@@ -32,8 +32,8 @@ spec:
       - name: nginx
         image: nginx
         imagePullPolicy: IfNotPresent
-#   tolerations:
-#      - key: "special"
-#        operator: "Exists"
-#        effect: "NoSchedule"
+   tolerations:
+      - key: "special"
+        operator: "Exists"
+        effect: "NoSchedule"
 ---
