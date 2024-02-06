@@ -21,3 +21,19 @@ spec:
             - name: php-redis
               image: gcr.io/google_samples/gb-frontend:v3
 ---
+apiVersion: v1
+kind: Pod
+metadata:
+   name: nginx
+   labels:
+      env: test
+spec:
+   containers:
+      - name: nginx
+        image: nginx
+        imagePullPolicy: IfNotPresent
+   tolerations:
+      - key: "special"
+        operator: "Exists"
+        effect: "NoSchedule"
+---
