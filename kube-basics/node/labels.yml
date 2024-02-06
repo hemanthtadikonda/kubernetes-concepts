@@ -35,3 +35,8 @@ spec:
    nodeSelector:
       intensive: memory
 ---
+
+#6  05/02/24 14:53:54 aws eks update-kubeconfig --name demo --region us-east-1
+#7  05/02/24 14:54:27 cp /home/centos/.kube/config /tmp/kubeconfig
+#8  05/02/24 14:54:44 kubectl --kubeconfig=/tmp/kubeconfig
+#9  05/02/24 14:54:51 kubectl --kubeconfig=/tmp/kubeconfig get all
