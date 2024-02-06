@@ -35,7 +35,7 @@ spec:
    selector:
       matchLabels:
          app: store
-   replicas: 1
+   replicas: 2
    template:
       metadata:
          labels:
