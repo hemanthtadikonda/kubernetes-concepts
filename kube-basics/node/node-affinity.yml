@@ -31,7 +31,7 @@ spec:
                     - key: intensive
                       operator: In
                       values:
-                         - doesn't exist
+                         - doesnot-exist
    containers:
       - name: nginx
         image: nginx
@@ -51,7 +51,7 @@ spec:
                     - key: intensive
                       operator: In
                       values:
-                         - doesn't exist
+                         - doesnot-exist
    containers:
       - name: nginx
         image: nginx

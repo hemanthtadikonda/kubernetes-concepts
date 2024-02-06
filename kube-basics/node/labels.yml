@@ -10,6 +10,7 @@ spec:
    containers:
       - name: nginx
         image: nginx
+        imagePullPolicy: IfNotPresent
    nodeSelector:
       intensive: general
 ---
@@ -21,6 +22,7 @@ spec:
    containers:
       - name: nginx
         image: nginx
+        imagePullPolicy: IfNotPresent
    nodeSelector:
       intensive: general
 ---
@@ -32,6 +34,7 @@ spec:
    containers:
       - name: nginx
         image: nginx
+        imagePullPolicy: IfNotPresent
    nodeSelector:
       intensive: memory
 ---
