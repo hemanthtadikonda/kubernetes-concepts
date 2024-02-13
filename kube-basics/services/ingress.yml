@@ -1,0 +1,85 @@
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+   name: nginx
+spec:
+   replicas: 1
+   selector:
+      matchLabels:
+         app: nginx
+   template:
+      metadata:
+         labels:
+            app: nginx
+      spec:
+         containers:
+            - name: nginx
+              image: nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+   name: nginx-svc
+spec:
+   selector:
+      app: nginx
+   ports:
+      - protocol: TCP
+        port: 80
+        targetPort: 80
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+   name: httpd
+spec:
+   replicas: 1
+   selector:
+      matchLabels:
+         app: httpd
+   template:
+      metadata:
+         labels:
+            app: httpd
+      spec:
+         containers:
+            - name: httpd
+              image: httpd
+---
+apiVersion: v1
+kind: Service
+metadata:
+   name: httpd-svc
+spec:
+   selector:
+      app: httpd
+   ports:
+      - protocol: TCP
+        port: 80
+        targetPort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+   name: ingress
+   annotations:
+      kubernetes.io/ingress.class: "nginx"
+      nginx.ingress.kubernetes.io/rewrite-target: /
+
+spec:
+   rules:
+      - host: "nginx.tadikonda.online"
+        http:
+           paths:
+              - path: "/"
+                backend:
+                   serviceName: nginx-svc
+                   servicePort: 80
+      -  host: "httpd.tadikonda.online"
+         http:
+            paths:
+               -  path: "/"
+                  backend:
+                     serviceName: httpd-svc
+                     servicePort: 80
