@@ -29,7 +29,7 @@ metadata:
       env: test
 spec:
    nodeSelector:
-      special: "true"
+      intensive: memory
    containers:
       -  name: nginx
          image: nginx
