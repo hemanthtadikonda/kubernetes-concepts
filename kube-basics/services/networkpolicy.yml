@@ -91,6 +91,9 @@ spec:
       - Ingress
    ingress:
       - from:
+           -  namespaceSelector:
+                 matchLabels:
+                    component: backend
            - podSelector:
                 matchLabels:
                    component: backend
