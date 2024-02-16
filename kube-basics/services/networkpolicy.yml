@@ -1,0 +1,101 @@
+# kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.6/config/v1.6/calico.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: frontend
+   labels:
+      component: frontend
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: backend
+   labels:
+      component: backend
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: database
+   labels:
+      component: database
+---
+apiVersion: v1
+kind: Pod
+metadata:
+   name: mysql
+   namespace: database
+   labels:
+      component: mysql
+
+spec:
+   containers:
+      - name: mariadb
+        image: mariadb
+        env:
+           -  name: MYSQL_ROOT_PASSWORD
+              value: password
+---
+apiVersion: v1
+kind: Pod
+metadata:
+   name: frontend
+   namespace: frontend
+   labels:
+      component: frontend
+spec:
+   containers:
+      - name: centos
+        image: centos:8
+        command:
+           - sleep
+           - "10000"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+   name: backend
+   namespace: backend
+   labels:
+      component: backend
+spec:
+   containers:
+      - name: centos
+        image: centos:8
+        command:
+           - sleep
+           - "10000"
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+   name: default-deny-egress
+   namespace: database
+spec:
+   podSelector:
+      matchLabels:
+         component: mysql
+   ingress: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+   name: test-network-policy
+   namespace: database
+spec:
+   podSelector:
+      matchLabels:
+         component: mysql
+   policyTypes:
+      - Ingress
+   ingress:
+      - from:
+           - podSelector:
+                matchLabels:
+                   component: backend
+        ports:
+           - protocol: TCP
+             port: 3306
+---
+
