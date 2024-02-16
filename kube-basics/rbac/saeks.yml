@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+   name: sample-aws-eks-service-account
+   annotations:
+      eks.amazonaws.com/role.arn:
+---
+apiVersion: v1
+kind: Pod
+metadata:
+   name: sample-sa
+spec:
+   ServiceAccount: "sample-aws-eks-service-account"
+   containers:
+      - name: centos
+        image: centos:8
+        command:
+           - sleep
+           - "10000"
+---
