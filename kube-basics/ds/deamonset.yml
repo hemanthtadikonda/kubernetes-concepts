@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+   name: fluentd-elasticsearch
+   namespace: kube-system
+   labels:
+      k8s-app: fluentd-logging
+spec:
+   selector:
+      matchLabels:
+         name: fluentd-elasticsearch
+   template:
+      metadata:
+         labels:
+            name: fluentd-elasticsearch
+      spec:
+         containers:
+            - name: fluentd-elasticsearch
+              image: nginx
+              resources:
+                 limits:
+                    memory: 200Mi
+                 requests:
+                    cpu: 100m
+                    memory: 200Mi
+         # it may be desirable to set a high priority class to ensure that a DaemonSet Pod
+         # preempts running Pods
+         # priorityClassName: important
