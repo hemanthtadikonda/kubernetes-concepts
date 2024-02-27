@@ -13,31 +13,31 @@ rules:
      resources: ["pods"]
      verbs: ["get", "watch", "list"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-   name: reader-to-sample-sa
-subjects:
-   - kind: ServiceAccount
-     name: sample-service-account
-     namespace: default
-roleRef:
-   # "roleRef" specifies the binding to a Role / ClusterRole
-   kind: Role #this must be Role or ClusterRole
-   name: reader # this must match the name of the Role or ClusterRole you wish to bind to
-   apiGroup: rbac.authorization.k8s.io
----
-apiVersion: v1
-kind: Pod
-metadata:
-   name: sample-sa
-spec:
-
-   containers:
-      - name: centos
-        image: centos:8
-        command:
-           - sleep
-           - "10000"
----
-#ServiceAccount: "sample-service-account"
+#apiVersion: rbac.authorization.k8s.io/v1
+#kind: RoleBinding
+#metadata:
+#   name: reader-to-sample-sa
+#subjects:
+#   - kind: ServiceAccount
+#     name: sample-service-account
+#     namespace: default
+#roleRef:
+#   # "roleRef" specifies the binding to a Role / ClusterRole
+#   kind: Role #this must be Role or ClusterRole
+#   name: reader # this must match the name of the Role or ClusterRole you wish to bind to
+#   apiGroup: rbac.authorization.k8s.io
+#---
+#apiVersion: v1
+#kind: Pod
+#metadata:
+#   name: sample-sa
+#spec:
+#
+#   containers:
+#      - name: centos
+#        image: centos:8
+#        command:
+#           - sleep
+#           - "10000"
+#---
+##ServiceAccount: "sample-service-account"
