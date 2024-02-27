@@ -22,7 +22,7 @@ kind: Pod
 metadata:
    name: sample-sa
 spec:
-   ServiceAccount: "admin-sa"
+   serviceAccountName: "admin-sa"
    containers:
       - name: centos
         image: centos:8
