@@ -33,6 +33,7 @@ kind: Pod
 metadata:
    name: sample-sa
 spec:
+   ServiceAccount: "sample-service-account"
    containers:
       - name: centos
         image: centos:8
