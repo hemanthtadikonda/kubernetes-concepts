@@ -86,3 +86,8 @@ spec:
                   backend:
                      serviceName: httpd-svc
                      servicePort: 80
+
+---
+
+
+#https://aws.amazon.com/blogs/opensource/network-load-balancer-nginx-ingress-controller-eks/
