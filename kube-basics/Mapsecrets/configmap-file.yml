@@ -74,7 +74,7 @@ spec:
         image: hemanthtadikonda/frontend:2.0.0
         volumeMounts:
            -  name: config-volume
-              mountPath: /etc/nginx
+              mountPath: /opt
    volumes:
       -  name: config-volume
          configMap:
