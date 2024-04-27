@@ -71,10 +71,10 @@ metadata:
 spec:
    containers:
       - name: frontend
-        image: hemanthtadikonda/frontend:2.0.0
+        image: hemanthtadikonda/frontend:2.6.0
         volumeMounts:
            -  name: config-volume
-              mountPath: /etc/nginx/conf.d/
+              mountPath: /data
    volumes:
       -  name: config-volume
          configMap:
