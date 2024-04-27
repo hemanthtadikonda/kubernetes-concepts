@@ -70,8 +70,8 @@ metadata:
    name: pod-file-test
 spec:
    containers:
-      - name: httpd
-        image: rkalluru/k06-configmap:v1
+      - name: frontend
+        image: hemanthtadikonda/frontend:2.0.0
         volumeMounts:
            -  name: config-volume
               mountPath: /etc/nginx
