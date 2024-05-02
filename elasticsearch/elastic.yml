@@ -1,4 +1,5 @@
 ##   kubectl create -f https://download.elastic.co/downloads/eck/2.12.1/crds.yaml
+##  kubectl apply -f https://download.elastic.co/downloads/eck/2.12.1/operator.yaml
 ---
 apiVersion: elasticsearch.k8s.elastic.co/v1
 kind: Elasticsearch
