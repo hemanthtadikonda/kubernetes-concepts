@@ -17,12 +17,17 @@ data:
                paths:
                   - /var/log/containers/*-${data.container.id}.log
       
+      setup.template.enabled: true
+      setup.template.name: "rs"
+      setup.template.pattern: "rs"
+      setup.ilm.enabled: false   
       processors:
          - add_cloud_metadata: 
          - add_host_metadata:
       
       output.elasticsearch:
          hosts: ["https://${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200"]
+         index: "rs-%{[kubernetes.namespace]:noindex}-%{[kubernetes.container.name]}-%{+yyyy.MM.dd}"
          username: ${ELASTICSEARCH_USERNAME}
          password: ${ELASTICSEARCH_PASSWORD}      
          ssl.certificate_authorities:
@@ -48,8 +53,8 @@ spec:
             - name: filebeat
               image: docker.elastic.co/beats/filebeat:8.0.0
               arg: [
-                "-c" , "/etc/filebeat.yml" ,
-                "-e" ,
+                 "-c" , "/etc/filebeat.yml" ,
+                 "-e" ,
               ]
               env:
                  -  name: ELASTICSEARCH_HOST
