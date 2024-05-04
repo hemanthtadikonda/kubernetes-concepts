@@ -1,0 +1,86 @@
+# ebs-csi-driver.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: ebs-csi-controller
+   namespace: kube-system
+spec:
+   selector:
+      matchLabels:
+         app: ebs-csi-controller
+   replicas: 2  # You can adjust replica count as per your requirements
+   template:
+      metadata:
+         labels:
+            app: ebs-csi-controller
+      spec:
+         serviceAccountName: ebs-csi-controller-sa
+         containers:
+            - name: ebs-csi-controller
+              image: amazon/aws-ebs-csi-driver:latest  # Use the appropriate version
+              volumeMounts:
+                 - name: plugins
+                   mountPath: /csi
+                 - name: csi-driver-bin
+                   mountPath: /bin
+         volumes:
+            - name: plugins
+              emptyDir: {}
+            - name: csi-driver-bin
+              emptyDir: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+   name: ebs-csi-controller-sa
+   namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+   name: ebs-csi-controller-role-binding
+subjects:
+   - kind: ServiceAccount
+     name: ebs-csi-controller-sa
+     namespace: kube-system
+roleRef:
+   kind: ClusterRole
+   name: ebs-csi-controller-role
+   apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+   name: ebs-csi-controller-role
+rules:
+   - apiGroups: [""]
+     resources: ["persistentvolumes"]
+     verbs: ["get", "list", "watch", "create", "delete"]
+   - apiGroups: [""]
+     resources: ["persistentvolumeclaims"]
+     verbs: ["get", "list", "watch", "update"]
+   - apiGroups: [""]
+     resources: ["storageclasses"]
+     verbs: ["get", "list", "watch"]
+   - apiGroups: [""]
+     resources: ["secrets"]
+     verbs: ["get"]
+   - apiGroups: [""]
+     resources: ["nodes"]
+     verbs: ["get", "list", "watch"]
+   - apiGroups: [""]
+     resources: ["events"]
+     verbs: ["create", "update", "patch"]
+   - apiGroups: ["storage.k8s.io"]
+     resources: ["csinodes"]
+     verbs: ["create"]
+---
+apiVersion: storage.k8s.io/v1
+kind: CSIDriver
+metadata:
+   name: ebs.csi.aws.com
+spec:
+   attachRequired: true
+   volumeLifecycleModes:
+      - Persistent
+---
