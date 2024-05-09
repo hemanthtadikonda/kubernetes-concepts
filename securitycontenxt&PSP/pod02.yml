@@ -1,16 +1,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-   name: pod00
+   name: pod02
 spec:
    securityContext:
       runAsNonRoot: true
    containers:
       - name: centos
-        image: centos:7
-        command:
-           -   sleep
-           -   "10000"
+        image: rkalluru/k06-nonroot
         volumeMounts:
            -  mountPath: /data
               name: root-volume
