@@ -1,0 +1,20 @@
+
+# kops edit cluster --name ${NAME} --state ${KOPS_STATE_STORE}
+
+subnets:
+  - cidr: 172.20.0.0/24
+    name: us-east-1a
+    type: Public
+    zone: us-east-1a
+  - cidr: 172.20.1.0/24
+    name: us-east-1b
+    type: Public
+    zone: us-east-1b
+  - cidr: 172.20.2.0/24
+    name: us-east-1c
+    type: Public
+    zone: us-east-1c
+
+kops update cluster --name ${NAME} --state ${KOPS_STATE_STORE}
+
+kops delete cluster --name ${NAME} --yes
