@@ -1,0 +1,62 @@
+687  04/12/24 13:14:31 kubectl get all -A |wc -l
+  688  04/12/24 13:14:50 kubectl get pods -A | wc -l
+  689  04/12/24 13:15:10 cd /etc/kubernetes/manifests
+  690  04/12/24 13:15:12 ls
+  691  04/12/24 13:15:22 cat etcd.yaml
+  692  04/12/24 13:15:42 etcdctl version
+  693  04/12/24 13:16:03 export ETCDCTL_API=3
+  694  04/12/24 13:16:30 etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot save /opt/backup-02.db
+  695  04/12/24 13:19:32 etcdctl --write-out=table snapshot status /opt/backup-02.db
+  696  04/12/24 13:20:02 etcdctl --endpoints=https://127.0.0.1:2379 > --cacert=/etc/kubernetes/pki/etcd/ca.crt > --cert=/etc/kubernetes/pki/etcd/server.crt > --key=/etc/kubernetes/pki/etcd/server.key \
+  697  04/12/24 13:20:42 etcdctl --endpoints=https://127.0.0.1:2379  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key --data-dir /var/lib/etcd-restore-from-backup-02 snapshot restore /opt/backup-02.db
+  698  04/12/24 13:23:23 ls
+  699  04/12/24 13:23:33 cd
+  700  04/12/24 13:23:34 ls
+  701  04/12/24 13:23:48 kubectl delete -f hem.yaml
+  702  04/12/24 13:24:05 kubectl delete -f deploy.yaml
+  703  04/12/24 13:24:45 cd /etc/kubernetes/manifests
+  704  04/12/24 13:24:46 ls
+  705  04/12/24 13:25:01 mv kube-apiserver.yaml /tmp
+  706  04/12/24 13:25:09 vi etcd.yaml
+  707  04/12/24 13:26:22 ls
+  708  04/12/24 13:26:51 mv * /tmp
+  709  04/12/24 13:27:03 systemctl restart kubelet
+  710  04/12/24 13:27:25 mv /tmp/*.yaml .
+  711  04/12/24 13:27:33 kubectl get pods
+  712  04/12/24 13:27:44 kubectl get pods -A
+  713  04/12/24 13:28:10 kubectl get pods
+  714  04/12/24 13:28:29 kubectl get deploy
+  715  04/12/24 13:28:45 kubectl describe pod my-web-app-778d4dff77-fnckn
+  716  04/12/24 13:29:24 kubectl get pods
+  717  04/12/24 13:29:33 kubectl get svc
+  718  04/12/24 13:29:42 kubectl get pod
+  719  04/12/24 13:30:02 kubectl describe pod my-web-app-778d4dff77-kssqx
+  720  04/12/24 13:30:29 systemctl restart kubelet
+  721  04/12/24 13:30:34 kubectl get pod
+  722  04/12/24 13:30:41 kubectl get pod -w
+  723  04/12/24 13:31:15 kubectl exec -it backend -- bin/bash
+  724  04/12/24 13:31:41 kubectl my-web-app-778d4dff77-fnckn -it backend -- bin/bash
+  725  04/12/24 13:32:03 kubectl get all -A | wc -l
+  726  04/12/24 13:32:12 kubectl get pod -A | wc -l
+  727  04/12/24 13:32:31 kubectl get deploy
+  728  04/12/24 13:32:48 kubectl describe deploy my-web-app
+  729  04/12/24 13:33:15 kubectl scale deploy my-web-app --replicas=1
+  730  04/12/24 13:33:25 kubectl get pods
+  731  04/12/24 13:33:49 kubectl delete pod my-web-app-778d4dff77-fnckn
+  732  04/12/24 13:34:02 kubectl get pods
+  733  04/12/24 13:34:20 kubectl get pods -w
+  734  04/12/24 13:34:48 kubectl get pods
+  735  04/12/24 13:35:10 top
+  736  04/12/24 13:35:25 kubectl get pods
+  737  04/12/24 13:35:40 kubectl describe pod my-web-app-778d4dff77-pbq6z
+  738  04/12/24 13:36:41 ls
+  739  04/12/24 13:37:03 mv kube-apiserver.yaml /tmp/
+  740  04/12/24 13:37:13 mv /tmp/kube-apiserver.yaml .
+  741  04/12/24 13:37:15 ls
+  742  04/12/24 13:37:26 kubectl get pods
+  743  04/12/24 13:37:32 ls
+  744  04/12/24 13:37:35 kubectl get pods
+  745  04/12/24 13:38:04 kubectl delete pod my-web-app-778d4dff77-pbq6z
+  746  04/12/24 13:38:22 kubectl get pods
+  747  04/12/24 13:38:46 kubectl get svc
+  748  04/12/24 13:39:28 history
