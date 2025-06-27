@@ -52,12 +52,16 @@ oc version
 # 🟢 Step-by-Step Cluster Creation
 
 ## ✅ 1. Login to Red Hat
+This opens a browser window for authentication.
+
 ```bash
 rosa login --use-auth-code
-
+```
+Option 2 (for browserless environment)
+```
 rosa login --use-device-code 
-````
-This opens a browser window for authentication.
+```
+
 
 ## ✅ 2. Verify AWS Permissions and Quota
 ```bash
