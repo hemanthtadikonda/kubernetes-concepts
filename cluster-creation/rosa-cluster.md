@@ -81,10 +81,21 @@ rosa create cluster \
   --region=us-east-1 \
   --version=4.19.0 \
   --multi-az \
-  --compute-machine-type=t3.large \
+  --compute-machine-type=t4g.xlarge \
   --replicas=2 \
   --mode=auto \
   --sts
+```
+```
+rosa create cluster \
+--cluster-name=dev-cluster \
+--region=us-east-1 \
+--version=4.19.0 \
+--single-az \
+--compute-machine-type=t4g.xlarge \
+--replicas=1 \
+--mode=auto \
+--sts
 ```
 ✅ Notes:
 
