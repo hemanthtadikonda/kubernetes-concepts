@@ -6,7 +6,7 @@ This document explains step-by-step how to create, manage, and delete a self-man
 
 * Full control over your cluster infrastructure
 
-* nIdeal for labs, evaluation, and advanced customization
+* Ideal for labs, evaluation, and advanced customization
 
 * No vendor lock-in for upgrades or lifecycle
 
