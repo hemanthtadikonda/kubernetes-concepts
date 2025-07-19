@@ -46,7 +46,7 @@ sudo systemctl start libvirtd
 mkdir -p ~/downloads && cd ~/downloads
 curl -LO https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/crc/latest/crc-linux-amd64.tar.xz
 tar -xvf crc-linux-amd64.tar.xz
-sudo mv crc-linux-*-amd64/crc /usr/local/bin/
+sudo mv crc-linux-2.52.0-amd64/crc /usr/local/bin/
 ```
 *Step 6: Get a Pull Secret*
 Go to: https://cloud.redhat.com/openshift/install/crc/installer-provisioned
