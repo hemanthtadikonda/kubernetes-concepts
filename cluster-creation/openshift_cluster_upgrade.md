@@ -41,12 +41,52 @@ df -h /var/lib/etcd
 
 Take etcd snapshot before upgrade:
 
+Before starting an upgrade, always take a **backup of etcd** and **static pod resources**.  
+This ensures you can restore the cluster if the upgrade fails or etcd becomes corrupted
+
+### ✅ 0.1 Backup Using `cluster-backup.sh` (Recommended)
+
+1. SSH into a master node:
+```bash
+oc get nodes -l node-role.kubernetes.io/master=
+ssh core@<master-node>
+```
+2. Run the backup script:
+```
+sudo -i
+cd /usr/local/bin
+```
+Take backup to /home/core/backup
+```
+/usr/local/bin/cluster-backup.sh /home/core/backup
+```
+3. Verify backup artifacts:
+```
+ls -l /home/core/backup
+```
+##### You should see:
+
+* snapshot_<timestamp>.db (etcd database snapshot)
+
+* static_kuberesources_<timestamp>.tar.gz (static pod manifests)
+4. Copy backup off the cluster (to S3, NFS, or secure storage):
+```
+scp -r /home/core/backup <user>@<backup-server>:/backups/ocp/
+```
+###  ✅ 0.2 Backup Using oc adm cluster-backup
+From OCP 4.10+:
+```
+oc adm cluster-backup /home/core/backup
+```
+This performs the same action as **cluster-backup.sh**
+### ✅ 0.3 Manual etcd Snapshot (Alternative Method, Not preferable)
+Although you can run:
 ```bash
 ETCD_POD=$(oc get pods -n openshift-etcd -o name | head -1)
 oc exec -n openshift-etcd $ETCD_POD -- etcdctl snapshot save /var/lib/etcd/snapshot.db
 oc cp openshift-etcd/$ETCD_POD:/var/lib/etcd/snapshot.db ./snapshot.db
 ```
-
+This only saves etcd data, **not static pod manifests**, and is **not supported for full recovery.**
 * Store snapshot in a **safe external location**.
 
 ---
@@ -266,43 +306,47 @@ oc adm upgrade resume
 * Use this option before etcd or critical nodes are fully impacted.
 
 ### 🔄 4.2 Full Cluster Recovery via etcd Restore
-
-If the cluster becomes unstable/unusable after upgrade:
-
-Identify and stop the failing cluster
-
-Shut down all control plane nodes to avoid corruption.
-
-Copy etcd snapshot to master node
+1. Copy backup snapshot to a master node:
 ```
-scp snapshot.db core@<master-node>:/home/core/
+scp <backup-server>:/backups/ocp/snapshot_<timestamp>.db /home/core/backup/
+scp <backup-server>:/backups/ocp/static_kuberesources_<timestamp>.tar.gz /home/core/backup/
 ```
-
-Restore etcd
+2. SSH into a master node:
 ```
+ssh core@<master-node>
 sudo -i
-mv /home/core/snapshot.db /var/lib/etcd/
+```
+3. Stop kubelet:
+```systemctl stop kubelet
+```
+4. Restore etcd from snapshot:
+```
+mv /home/core/backup/snapshot_<timestamp>.db /var/lib/etcd/
 mv /var/lib/etcd /var/lib/etcd-backup
 mkdir /var/lib/etcd
-etcdctl snapshot restore /var/lib/etcd/snapshot.db --data-dir /var/lib/etcd
+etcdctl snapshot restore /var/lib/etcd/snapshot_<timestamp>.db --data-dir /var/lib/etcd
 ```
+5. Reconfigure static pods (etcd, kube-apiserver, kube-scheduler, kube-controller-manager):
 
-* Reconfigure static pods (etcd, kube-apiserver, kube-scheduler, kube-controller-manager)
+6. Update manifest files under `/etc/kubernetes/manifests/` to point to restored etcd.
+    - Edit `/etc/kubernetes/manifests/etcd-pod.yaml` to ensure `--data-dir=/var/lib/etcd` is correct.
+    - Ensure other static pod manifests are intact.
 
-* Update manifest files under /etc/kubernetes/manifests/ to point to restored etcd.
-
-* Restart kubelet.
-
-* Restart control plane services
-
-* systemctl restart kubelet
-
-
-Verify etcd health
+7. Restart kubelet:
+```systemctl start kubelet
 ```
-oc get etcd -n openshift-etcd
+8. Verify etcd health:
+```oc get etcd -n openshift-etcd
 ```
-
+9. Restore static pod manifests:
+```tar -xzvf /home/core/backup/static_kuberesources_<timestamp>.tar.gz -C /etc/kubernetes/manifests/
+```
+10. Restart kubelet again:
+```systemctl restart kubelet
+```
+11. Monitor cluster status:
+```watch -n30 oc get clusterversion
+```
 
 👉 This will roll back the cluster to the exact state at snapshot time (including OpenShift version).
 Downtime: Typically 20–40 min, depending on restore speed.
