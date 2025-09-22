@@ -423,6 +423,7 @@ Any custom OS changes (not part of MachineConfig) may be lost when rolling back.
 
 </details>
 
+
 ---
 
 ## ✅ Upgrade Checklist(summary)
@@ -434,7 +435,7 @@ Any custom OS changes (not part of MachineConfig) may be lost when rolling back.
 5. Perform **Post-checks** (apps, workloads, operators).
 6. If broken → pause upgrade or restore from etcd snapshot.
 
----
+
 
 
 
