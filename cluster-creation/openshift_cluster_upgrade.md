@@ -317,7 +317,8 @@ ssh core@<master-node>
 sudo -i
 ```
 3. Stop kubelet:
-```systemctl stop kubelet
+```
+systemctl stop kubelet
 ```
 4. Restore etcd from snapshot:
 ```
@@ -333,19 +334,24 @@ etcdctl snapshot restore /var/lib/etcd/snapshot_<timestamp>.db --data-dir /var/l
     - Ensure other static pod manifests are intact.
 
 7. Restart kubelet:
-```systemctl start kubelet
+```
+systemctl start kubelet
 ```
 8. Verify etcd health:
-```oc get etcd -n openshift-etcd
+```o
+c get etcd -n openshift-etcd
 ```
 9. Restore static pod manifests:
-```tar -xzvf /home/core/backup/static_kuberesources_<timestamp>.tar.gz -C /etc/kubernetes/manifests/
+```
+tar -xzvf /home/core/backup/static_kuberesources_<timestamp>.tar.gz -C /etc/kubernetes/manifests/
 ```
 10. Restart kubelet again:
-```systemctl restart kubelet
+```
+systemctl restart kubelet
 ```
 11. Monitor cluster status:
-```watch -n30 oc get clusterversion
+```
+watch -n30 oc get clusterversion
 ```
 
 👉 This will roll back the cluster to the exact state at snapshot time (including OpenShift version).
