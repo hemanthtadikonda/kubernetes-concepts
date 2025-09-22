@@ -4,7 +4,7 @@
 This guide explains how to **safely upgrade an OpenShift cluster** to the latest stable release with **pre-checks, implementation steps, post-checks, common issues, and rollback options**.  
 It is structured for **easy execution and GitHub readability**.
 
----
+
 <!-- PRE CHECK Section -->
 
 <summary><h3>1. PRE CHECK</h3></summary>
@@ -93,7 +93,7 @@ oc adm upgrade channel stable-4.17
 
 </details>
 
----
+
 
 <!-- IMPLEMENTATION Section -->
 
@@ -169,7 +169,7 @@ oc adm upgrade resume
 
 </details>
 
----
+
 
 <!-- POSTCHECKS Section -->
 
@@ -233,7 +233,7 @@ Open route in browser → should display **Hello OpenShift!**
 
 </details>
 
----
+
 
 <!-- ROLLBACK Section -->
 
