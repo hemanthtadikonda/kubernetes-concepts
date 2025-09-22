@@ -1,9 +1,9 @@
-```markdown
+
 # 🚀 OpenShift 4.XX → Upgrade Guide
 
 This guide explains how to **safely upgrade an OpenShift cluster** to the latest stable release with **pre-checks, implementation steps, post-checks, common issues, and rollback options**.  
 It is structured for **easy execution and GitHub readability**.
-```
+
 ---
 <!-- PRE CHECK Section -->
 
