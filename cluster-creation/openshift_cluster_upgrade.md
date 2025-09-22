@@ -316,46 +316,68 @@ scp <backup-server>:/backups/ocp/static_kuberesources_<timestamp>.tar.gz /home/c
 ssh core@<master-node>
 sudo -i
 ```
-3. Stop kubelet:
+3. Stop static pods on all masters:
+```
+mv /etc/kubernetes/manifests /etc/kubernetes/manifests.bak
+```
+4. Run restore command:
+```agsl
+/usr/local/bin/cluster-restore.sh /home/core/backup
+```
+* This restores etcd snapshot + static pod manifests.
+5. Restart services:
+```
+mv /etc/kubernetes/manifests.bak /etc/kubernetes/manifests
+```
+---
+> Alternatively, manually restore etcd:
+<details>
+<br/>
+
+#### To restore etcd manually:
+1. SSH into a master node:
+2. Stop kubelet:
 ```
 systemctl stop kubelet
 ```
-4. Restore etcd from snapshot:
+3. Restore etcd from snapshot:
 ```
 mv /home/core/backup/snapshot_<timestamp>.db /var/lib/etcd/
 mv /var/lib/etcd /var/lib/etcd-backup
 mkdir /var/lib/etcd
 etcdctl snapshot restore /var/lib/etcd/snapshot_<timestamp>.db --data-dir /var/lib/etcd
 ```
-5. Reconfigure static pods (etcd, kube-apiserver, kube-scheduler, kube-controller-manager):
+4. Reconfigure static pods (etcd, kube-apiserver, kube-scheduler, kube-controller-manager):
 
-6. Update manifest files under `/etc/kubernetes/manifests/` to point to restored etcd.
+5. Update manifest files under `/etc/kubernetes/manifests/` to point to restored etcd.
     - Edit `/etc/kubernetes/manifests/etcd-pod.yaml` to ensure `--data-dir=/var/lib/etcd` is correct.
     - Ensure other static pod manifests are intact.
 
-7. Restart kubelet:
+6. Restart kubelet:
 ```
 systemctl start kubelet
 ```
-8. Verify etcd health:
-```o
-c get etcd -n openshift-etcd
+7. Verify etcd health:
 ```
-9. Restore static pod manifests:
+oc get etcd -n openshift-etcd
+```
+8. Restore static pod manifests:
 ```
 tar -xzvf /home/core/backup/static_kuberesources_<timestamp>.tar.gz -C /etc/kubernetes/manifests/
 ```
-10. Restart kubelet again:
+9. Restart kubelet again:
 ```
 systemctl restart kubelet
 ```
-11. Monitor cluster status:
+10. Monitor cluster status:
 ```
 watch -n30 oc get clusterversion
 ```
 
-👉 This will roll back the cluster to the exact state at snapshot time (including OpenShift version).
-Downtime: Typically 20–40 min, depending on restore speed.
+--- 
+
+#### 👉 This will roll back the cluster to the exact state at snapshot time (including OpenShift version).
+* Downtime: Typically 20–40 min, depending on restore speed.
 Best practice: Always take etcd snapshot right before upgrade.
 
 ### 🔄 4.3 Worker Node Recovery (Rollback for Workers)
