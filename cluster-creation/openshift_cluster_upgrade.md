@@ -375,7 +375,6 @@ watch -n30 oc get clusterversion
 ```
 
 </details>
----
 
 #### 👉 This will roll back the cluster to the exact state at snapshot time (including OpenShift version).
 * Downtime: Typically 20–40 min, depending on restore speed.
