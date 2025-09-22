@@ -324,6 +324,7 @@ mv /etc/kubernetes/manifests /etc/kubernetes/manifests.bak
 ```agsl
 /usr/local/bin/cluster-restore.sh /home/core/backup
 ```
+* No need to write or create `cluster-restore.sh` — it’s already available out-of-the-box in OpenShift.
 * This restores etcd snapshot + static pod manifests.
 5. Restart services:
 ```
