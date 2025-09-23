@@ -17,13 +17,16 @@ It is structured for **easy execution and GitHub readability**.
 oc get clusterversion
 oc get nodes
 oc get co
+oc get mcp
 oc get pods --all-namespaces
+oc adm top nodes
 
 
 * All nodes → `Ready`
 * Cluster Operators (COs) → `Available=True`, `Progressing=False`, `Degraded=False`
+* MCPs (master, worker) should not be Updating or Degraded.
 * No pods in `CrashLoopBackOff`
-
+* Ensure enough CPU, memory, and disk capacity (upgrade will roll one node at a time).
 ```
 ### ✅ 1.2 Verify Storage & Disk Space
 
