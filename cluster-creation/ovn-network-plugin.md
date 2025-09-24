@@ -1,9 +1,5 @@
 # OpenShift — OVN-Kubernetes (OVN-K8s) Deep Dive
 
-> **Status:** Updated — corrected historical/version notes (OVN default from OpenShift **4.11**; OpenShift SDN **deprecated 4.14**, removed/unsupported for later upgrades). See the **Version History** section.
-
----
-
 ## Table of contents
 
 1. TL;DR
