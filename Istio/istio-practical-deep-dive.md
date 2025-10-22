@@ -26,7 +26,7 @@ kubectl create deployment nginx-deploy --image=nginx
 kubectl expose deployment nginx-deploy --port=80 --target-port=80 --name=nginx-svc --type=ClusterIP
 
 # CentOS Deployment (sleep for 1 hour)
-kubectl create deployment centos-deploy --image=centos -- sleep 3600
+kubectl create deployment centos-deploy --image=centos:8 -- sleep 3600
 
 # Expose as ClusterIP service
 kubectl expose deployment centos-deploy --port=8080 --name=centos-svc --type=ClusterIP
