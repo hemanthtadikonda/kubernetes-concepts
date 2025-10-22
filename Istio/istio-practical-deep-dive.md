@@ -140,35 +140,13 @@ kubectl create namespace istio-test
 kubectl create deployment centos-new --image=centos -n istio-test -- sleep 3600
 kubectl expose deployment centos-new --port=8081 --name=centos-new-svc --type=ClusterIP -n istio-test
 ```
-Check sidecar injection:
+check access from this new pod to nginx-svc in default namespace
 
-```
-kubectl get pods centos-new-xxxxx -o jsonpath='{.spec.containers[*].name}'
-```
-Expected output:
-
-nginx
-Copy code
-centos istio-proxy
-If automatic injection is enabled, sidecar will be injected.
-If not, it means:
-
-The namespace is not labeled for injection, or
-
-Injection webhook failed.
-
-You can manually inject like this:
-
-```
-kubectl delete pod <pod-name>
-kubectl get ns default --show-labels
-```
-**Ensure: istio-injection=enabled**
 
 ✅ Test Communication
 
 ```
-kubectl exec -it deploy/centos-new -- bash
+kubectl exec -it deploy/centos-new -n istio-test  -- bash
 curl nginx-svc.default.svc.cluster.local
 If mTLS is enabled, traffic passes via Envoy proxies and is encrypted.
 If policies are not yet configured, it behaves as open (accessible).
@@ -176,8 +154,48 @@ If policies are not yet configured, it behaves as open (accessible).
 ✅ Key Learning:
 
 New workloads in labeled namespaces automatically join the service mesh.
-
 If not labeled, they remain outside the mesh (communication may fail due to missing mTLS or routing rules).
+
+### 🔐 Deep dive — `PeerAuthentication` & `mTLS STRICT`
+
+Here is the YAML you provided:
+
+```yaml
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: mtls-mode
+  namespace: default
+spec:
+  mtls:
+    mode: STRICT
+```
+**What this YAML does:**
+- This is an Istio PeerAuthentication resource that enforces mutual TLS (mTLS) in STRICT mode for all workloads in the default namespace. When applied, the workloads selected by this namespace-level policy will only accept mTLS-encrypted connections (plaintext connections will be rejected).
+- PeerAuthentication resource — modes (DISABLE, PERMISSIVE, STRICT) and scope (namespace-level, workload-level).
+- STRICT mode — requires all incoming and outgoing traffic to be encrypted using mTLS.
+
+## ✅ Migration best-practice: STRICT  → PERMISSIVE
+
+- To avoid immediate breakage when enabling mTLS, follow a migration path:
+- Set namespace-wide (or mesh-wide) PeerAuthentication to PERMISSIVE. This accepts both plaintext and mTLS connections.
+
+```
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: mtls-permissive
+  namespace: default
+spec:
+  mtls:
+    mode: PERMISSIVE
+```
+### Confirm PeerAuthentication exists:
+```
+kubectl get peerauthentication -n default
+kubectl describe peerauthentication mtls-mode -n default
+```
+
 
 ## 🧠 Phase 5: Deep Dive – Istio Internals (from Official Docs) 
 🔸 Bookinfo Example Overview
