@@ -136,8 +136,9 @@ This enables traffic management, tracing, encryption (mTLS), and policies.
 Now let’s add a new CentOS deployment after Istio is installed.
 
 ```
-kubectl create deployment centos-new --image=centos -- sleep 3600
-kubectl expose deployment centos-new --port=8081 --name=centos-new-svc --type=ClusterIP
+kubectl create namespace istio-test
+kubectl create deployment centos-new --image=centos -n istio-test -- sleep 3600
+kubectl expose deployment centos-new --port=8081 --name=centos-new-svc --type=ClusterIP -n istio-test
 ```
 Check sidecar injection:
 
