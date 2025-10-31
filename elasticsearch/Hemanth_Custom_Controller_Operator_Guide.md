@@ -56,33 +56,44 @@ Use `minikube`, `kind`, or your cloud cluster.
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: webapps.hemanth.dev
+   name: webapps.hemanth.dev
 spec:
-  group: hemanth.dev
-  versions:
-    - name: v1
-      served: true
-      storage: true
-      schema:
-        openAPIV3Schema:
-          type: object
-          properties:
-            spec:
+   group: hemanth.dev
+   names:
+      plural: webapps
+      singular: webapp
+      kind: WebApp
+      shortNames:
+         - wa
+   scope: Namespaced
+   versions:
+      - name: v1
+        served: true
+        storage: true
+        schema:
+           openAPIV3Schema:
               type: object
               properties:
-                name:
-                  type: string
-                image:
-                  type: string
-                replicas:
-                  type: integer
-  scope: Namespaced
-  names:
-    plural: webapps
-    singular: webapp
-    kind: WebApp
-    shortNames:
-    - wa
+                 spec:
+                    type: object
+                    properties:
+                       name:
+                          type: string
+                       image:
+                          type: string
+                       replicas:
+                          type: integer
+                       serviceType:
+                          type: string
+                       port:
+                          type: integer
+                       targetPort:
+                          type: integer
+                    required:
+                       - name
+                       - image
+                       - replicas
+
 ```
 
 **CR Example (`webapp-cr.yaml`)**
@@ -90,11 +101,15 @@ spec:
 apiVersion: hemanth.dev/v1
 kind: WebApp
 metadata:
-  name: myapp
+   name: myapp
 spec:
-  name: hemanthapp
-  image: hemanthapp:v1
-  replicas: 2
+   name: my-web-app
+   image: nginx:latest
+   replicas: 2
+   serviceType: NodePort
+   port: 80
+   targetPort: 80
+
 ```
 
 ---
@@ -112,29 +127,90 @@ pip install kopf kubernetes pyyaml
 ```python
 import kopf
 import subprocess
+import yaml
+import tempfile
+import os
+import datetime
+
+# Default values for Helm chart
+DEFAULT_VALUES = {
+    "image": {"repository": "nginx", "tag": "latest"},
+    "replicaCount": 1,
+    "service": {"type": "ClusterIP", "port": 80, "targetPort": 80}
+}
+
+def merge_values(spec):
+    """
+    Merge user-provided values in CR with defaults.
+    """
+    image = spec.get("image", f"{DEFAULT_VALUES['image']['repository']}:{DEFAULT_VALUES['image']['tag']}")
+    if ":" in image:
+        repository, tag = image.split(":")
+    else:
+        repository = image
+        tag = DEFAULT_VALUES["image"]["tag"]
+
+    return {
+        # Force Helm to detect updates
+        "_crd_update_time": datetime.datetime.utcnow().isoformat(),
+        "image": {
+            "repository": repository,
+            "tag": tag
+        },
+        "replicaCount": spec.get("replicas", DEFAULT_VALUES["replicaCount"]),
+        "service": {
+            "type": spec.get("serviceType", DEFAULT_VALUES["service"]["type"]),
+            "port": spec.get("port", DEFAULT_VALUES["service"]["port"]),
+            "targetPort": spec.get("targetPort", DEFAULT_VALUES["service"]["targetPort"])
+        }
+    }
+
+def deploy_helm_chart(app_name, namespace, helm_chart_path, values):
+    """
+    Deploy or upgrade Helm release using merged values.
+    """
+    # Create a temporary values file
+    with tempfile.NamedTemporaryFile("w", delete=False) as f:
+        yaml.dump(values, f)
+        temp_file = f.name
+
+    # Helm upgrade --install ensures create or update
+    helm_cmd = [
+        "helm", "upgrade", "--install", app_name, helm_chart_path,
+        "-f", temp_file,
+        "--namespace", namespace,
+        "--reset-values"
+    ]
+    subprocess.run(helm_cmd, check=True)
+    os.remove(temp_file)
 
 @kopf.on.create('hemanth.dev', 'v1', 'webapps')
 def create_webapp(spec, name, namespace, logger, **kwargs):
     app_name = spec.get('name', name)
-    image = spec.get('image', 'nginx')
-    replicas = spec.get('replicas', 1)
-    
-    logger.info(f"Deploying Helm chart for {app_name} in {namespace}...")
-    
-    helm_cmd = [
-        "helm", "install", app_name, "./hemanthapp-chart",
-        "--set", f"image.repository={image}",
-        "--set", f"replicaCount={replicas}",
-        "--namespace", namespace
-    ]
-    subprocess.run(helm_cmd, check=True)
+    helm_chart_path = "/home/centos/my-webpage/helm/my-web-page-chart"
+
+    logger.info(f"Creating/Deploying WebApp {app_name} in namespace {namespace}")
+    values = merge_values(spec)
+    deploy_helm_chart(app_name, namespace, helm_chart_path, values)
     logger.info(f"✅ Successfully deployed {app_name}")
+
+@kopf.on.update('hemanth.dev', 'v1', 'webapps')
+def update_webapp(spec, name, namespace, logger, **kwargs):
+    app_name = spec.get('name', name)
+    helm_chart_path = "/home/centos/my-webpage/helm/my-web-page-chart"
+
+    logger.info(f"Updating WebApp {app_name} in namespace {namespace}")
+    values = merge_values(spec)
+    deploy_helm_chart(app_name, namespace, helm_chart_path, values)
+    logger.info(f"🔄 Successfully updated {app_name}")
 
 @kopf.on.delete('hemanth.dev', 'v1', 'webapps')
 def delete_webapp(spec, name, namespace, logger, **kwargs):
-    logger.info(f"Uninstalling Helm release {name}...")
-    subprocess.run(["helm", "uninstall", name, "--namespace", namespace])
-    logger.info(f"🧹 Cleaned up {name}")
+    logger.info(f"Deleting WebApp {name} in namespace {namespace}")
+    subprocess.run(["helm", "uninstall", name, "--namespace", namespace], check=True)
+    logger.info(f"🧹 Successfully deleted {name}")
+
+
 ```
 
 Run locally for testing:
