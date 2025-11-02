@@ -125,14 +125,33 @@ pip install kopf kubernetes pyyaml
 
 **controller.py**
 ```python
+apiVersion: hemanth.dev/v1
+kind: WebApp
+metadata:
+   name: hemanth
+spec:
+   name: hemanth-app
+   image: hemanthtadikonda/my-app:10296419433
+   replicas: 1
+   serviceType: NodePort
+   port: 80
+   targetPort: 8051
+
+
+54.90.242.41 | 172.31.27.205 | t3.small | null
+[ centos@ip-172-31-27-205 ~/operator ]$ ls
+controller.py  crd.yaml  cr.yaml  __pycache__
+
+54.90.242.41 | 172.31.27.205 | t3.small | null
+[ centos@ip-172-31-27-205 ~/operator ]$ cat controller.py
 import kopf
 import subprocess
 import yaml
 import tempfile
 import os
 import datetime
+import hashlib
 
-# Default values for Helm chart
 DEFAULT_VALUES = {
     "image": {"repository": "nginx", "tag": "latest"},
     "replicaCount": 1,
@@ -140,23 +159,15 @@ DEFAULT_VALUES = {
 }
 
 def merge_values(spec):
-    """
-    Merge user-provided values in CR with defaults.
-    """
     image = spec.get("image", f"{DEFAULT_VALUES['image']['repository']}:{DEFAULT_VALUES['image']['tag']}")
     if ":" in image:
-        repository, tag = image.split(":")
+        repository, tag = image.split(":", 1)
     else:
         repository = image
         tag = DEFAULT_VALUES["image"]["tag"]
 
-    return {
-        # Force Helm to detect updates
-        "_crd_update_time": datetime.datetime.utcnow().isoformat(),
-        "image": {
-            "repository": repository,
-            "tag": tag
-        },
+    merged = {
+        "image": {"repository": repository, "tag": tag},
         "replicaCount": spec.get("replicas", DEFAULT_VALUES["replicaCount"]),
         "service": {
             "type": spec.get("serviceType", DEFAULT_VALUES["service"]["type"]),
@@ -165,51 +176,66 @@ def merge_values(spec):
         }
     }
 
-def deploy_helm_chart(app_name, namespace, helm_chart_path, values):
-    """
-    Deploy or upgrade Helm release using merged values.
-    """
-    # Create a temporary values file
-    with tempfile.NamedTemporaryFile("w", delete=False) as f:
-        yaml.dump(values, f)
-        temp_file = f.name
+    # deterministic hash of the important fields for change detection
+    merged_hash = hashlib.sha256(yaml.dump(merged, sort_keys=True).encode()).hexdigest()[:12]
+    merged["_spec_hash"] = merged_hash
+    merged["_crd_update_time"] = datetime.datetime.utcnow().isoformat()
 
-    # Helm upgrade --install ensures create or update
-    helm_cmd = [
-        "helm", "upgrade", "--install", app_name, helm_chart_path,
-        "-f", temp_file,
-        "--namespace", namespace,
-        "--reset-values"
-    ]
-    subprocess.run(helm_cmd, check=True)
-    os.remove(temp_file)
+    return merged
+
+def deploy_helm_chart(app_name, namespace, helm_chart_path, values, logger):
+    tmp = None
+    try:
+        with tempfile.NamedTemporaryFile("w", delete=False) as fh:
+            yaml.dump(values, fh)
+            tmp = fh.name
+
+        helm_cmd = [
+            "helm", "upgrade", "--install", app_name, helm_chart_path,
+            "-f", tmp,
+            "--namespace", namespace,
+            "--create-namespace",
+            "--reset-values"
+        ]
+        logger.info(f"Running: {' '.join(helm_cmd)}")
+        subprocess.run(helm_cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError as e:
+        # surface Helm stderr/stdout for debugging
+        out = getattr(e, 'stdout', None)
+        err = getattr(e, 'stderr', None)
+        logger.error(f"Helm failed: stdout={out} stderr={err}")
+        # raise TemporaryError so Kopf retries
+        raise kopf.TemporaryError(f"Helm failed: {err or e}", delay=30)
+    finally:
+        if tmp and os.path.exists(tmp):
+            os.remove(tmp)
 
 @kopf.on.create('hemanth.dev', 'v1', 'webapps')
 def create_webapp(spec, name, namespace, logger, **kwargs):
     app_name = spec.get('name', name)
     helm_chart_path = "/home/centos/my-webpage/helm/my-web-page-chart"
-
-    logger.info(f"Creating/Deploying WebApp {app_name} in namespace {namespace}")
+    logger.info(f"Creating WebApp {app_name} in {namespace}")
     values = merge_values(spec)
-    deploy_helm_chart(app_name, namespace, helm_chart_path, values)
-    logger.info(f"✅ Successfully deployed {app_name}")
+    deploy_helm_chart(app_name, namespace, helm_chart_path, values, logger)
+    logger.info("Deployed")
 
 @kopf.on.update('hemanth.dev', 'v1', 'webapps')
 def update_webapp(spec, name, namespace, logger, **kwargs):
     app_name = spec.get('name', name)
     helm_chart_path = "/home/centos/my-webpage/helm/my-web-page-chart"
-
-    logger.info(f"Updating WebApp {app_name} in namespace {namespace}")
+    logger.info(f"Updating WebApp {app_name} in {namespace}")
     values = merge_values(spec)
-    deploy_helm_chart(app_name, namespace, helm_chart_path, values)
-    logger.info(f"🔄 Successfully updated {app_name}")
+    deploy_helm_chart(app_name, namespace, helm_chart_path, values, logger)
+    logger.info("Updated")
 
 @kopf.on.delete('hemanth.dev', 'v1', 'webapps')
 def delete_webapp(spec, name, namespace, logger, **kwargs):
-    logger.info(f"Deleting WebApp {name} in namespace {namespace}")
-    subprocess.run(["helm", "uninstall", name, "--namespace", namespace], check=True)
-    logger.info(f"🧹 Successfully deleted {name}")
-
+    logger.info(f"Deleting WebApp {name} in {namespace}")
+    try:
+        subprocess.run(["helm", "uninstall", name, "--namespace", namespace], check=True)
+    except subprocess.CalledProcessError:
+        logger.warning(f"Helm uninstall failed or release missing: {name}")
+    logger.info("Deleted")
 
 ```
 
