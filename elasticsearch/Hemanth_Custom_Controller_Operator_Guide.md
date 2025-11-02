@@ -337,3 +337,38 @@ At the end of this project, you’ll have:
 ---
 
 **Hemanth’s Mindset:** 🧩 “Understand deeply, build something your own, then automate it.”
+
+
+
+**Helm Chart Deployment Template (`templates/deployment.yaml`)**
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fullnameOverride | default .Release.Name }}
+  labels:
+    app: {{ .Values.fullnameOverride | default .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ .Values.fullnameOverride | default .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.fullnameOverride | default .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Values.fullnameOverride | default .Release.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.service.targetPort | default 80 }}
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "150m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+
+```
