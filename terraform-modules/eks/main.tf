@@ -83,7 +83,6 @@ module "eks" {
 resource "aws_eks_addon" "vpc_cni" {
   cluster_name = module.eks.cluster_id
   addon_name   = "vpc-cni"
-  resolve_conflicts = "OVERWRITE"
   tags = {
     Environment = "staging"
     Terraform   = "true"
@@ -93,7 +92,6 @@ resource "aws_eks_addon" "vpc_cni" {
 resource "aws_eks_addon" "coredns" {
   cluster_name = module.eks.cluster_id
   addon_name   = "coredns"
-  resolve_conflicts = "OVERWRITE"
   tags = {
     Environment = "staging"
     Terraform   = "true"
@@ -103,7 +101,6 @@ resource "aws_eks_addon" "coredns" {
 resource "aws_eks_addon" "cloudwatch_obs" {
   cluster_name = module.eks.cluster_id
   addon_name   = "amazon-cloudwatch-observability"
-  resolve_conflicts = "OVERWRITE"
   tags = {
     Environment = "staging"
     Terraform   = "true"
@@ -112,7 +109,7 @@ resource "aws_eks_addon" "cloudwatch_obs" {
 
 # Provide kubeconfig output
 output "kubeconfig" {
-  value = module.eks.kubeconfig
+  value = module.eks.kubeconfig_raw
   sensitive = true
 }
 
@@ -172,10 +169,6 @@ resource "aws_efs_mount_target" "mt" {
   file_system_id  = aws_efs_file_system.pimcore.id
   subnet_id       = each.value
   security_groups = [aws_security_group.efs_sg.id]
-  tags = {
-    Environment = "staging"
-    Terraform   = "true"
-  }
 }
 
 
