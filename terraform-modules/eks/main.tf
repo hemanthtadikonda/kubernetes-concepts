@@ -148,5 +148,14 @@ resource "aws_efs_mount_target" "mt" {
   security_groups = [aws_security_group.efs_sg.id]
 }
 
+module "ebs-csi-driver" {
+  source = "./ebs-csi-driver"
+  cluster_name = module.eks.cluster_name
+}
+
+module "efs-csi-driver" {
+  source = "./efs-csi-driver"
+  cluster_name = module.eks.cluster_name
+}
 
 
