@@ -158,10 +158,11 @@ resource "aws_security_group" "efs_sg" {
 
 # Mount targets for each private subnet
 resource "aws_efs_mount_target" "mt" {
-  for_each = toset(module.vpc.private_subnets)
+  count           = length(module.vpc.private_subnets)
   file_system_id  = aws_efs_file_system.pimcore.id
-  subnet_id       = each.value
+  subnet_id       = module.vpc.private_subnets[count.index]
   security_groups = [aws_security_group.efs_sg.id]
 }
+
 
 
