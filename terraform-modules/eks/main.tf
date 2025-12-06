@@ -58,8 +58,23 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
-  # create/add common addons via aws_eks_addon
-  manage_aws_auth = true
+  node_groups = {
+    general = {
+      desired_capacity = var.node_desired
+      max_capacity     = var.node_max
+      min_capacity     = var.node_min
+      instance_types   = [var.node_instance_type]
+      key_name         = var.ssh_key_name
+    }
+  }
+  # Map IAM role of nodes
+  map_roles = [
+    {
+      rolearn  = module.eks.node_groups["general"].iam_role_arn
+      username = "system:node:{{EC2PrivateDNSName}}"
+      groups   = ["system:bootstrappers", "system:nodes"]
+    }
+  ]
 
   tags = {
     Environment = "staging"
