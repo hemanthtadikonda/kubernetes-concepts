@@ -108,9 +108,8 @@ resource "aws_eks_addon" "cloudwatch_obs" {
 }
 
 # Provide kubeconfig output
-output "kubeconfig" {
-  value = module.eks.kubeconfig_raw
-  sensitive = true
+output "kubeconfig_path" {
+  value = module.eks.kubeconfig_path
 }
 
 
