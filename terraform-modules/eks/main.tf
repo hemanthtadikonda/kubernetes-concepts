@@ -1,30 +1,14 @@
-terraform {
-  required_version = ">= 1.3.0"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = ">= 6.0, < 7.0"
-    }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~> 2.18"
-    }
-  }
-}
-
-
 provider "aws" {
-  region = var.region
+  region = "us-east-1"
 }
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "my-vpc"
+  name = "${var.cluster_name}-vpc"
   cidr = "10.0.0.0/16"
 
-  azs             = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+  azs             = ["us-east-1a", "us-east-1b", "us-east-1c"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 
@@ -41,7 +25,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 21.0"
 
-  name               = "example"
+  name               = var.cluster_name
   kubernetes_version = "1.30"
 
   # Optional
@@ -67,6 +51,7 @@ module "eks" {
       min_capacity     = var.node_min
       instance_types   = [var.node_instance_type]
       key_name         = var.ssh_key_name
+      subnet_ids = module.vpc.private_subnets
       additional_tags = {
         Name = "eks-node-general"
       }
@@ -155,7 +140,6 @@ resource "aws_security_group" "efs_sg" {
     Terraform   = "true"
   }
 }
-
 # Mount targets for each private subnet
 resource "aws_efs_mount_target" "mt" {
   count           = length(module.vpc.private_subnets)
