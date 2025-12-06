@@ -11,7 +11,7 @@ data "aws_eks_cluster_auth" "eks" {
 
 module "irsa_efs_csi" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = ">= 4.0"
+  version = "5.39.0"
 
   create_role                   = true
   role_name                     = "AmazonEKS-EFS-CSI-Role-${var.cluster_name}"
