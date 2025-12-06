@@ -33,7 +33,7 @@ module "eks" {
   version = "~> 21.0"
 
   name               = "example"
-  kubernetes_version = "1.32"
+  kubernetes_version = "1.30"
 
   # Optional
   endpoint_public_access = true
