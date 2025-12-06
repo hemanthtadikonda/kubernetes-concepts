@@ -107,12 +107,6 @@ resource "aws_eks_addon" "cloudwatch_obs" {
   }
 }
 
-# Provide kubeconfig output
-output "kubeconfig_path" {
-  value = module.eks.kubeconfig_path
-}
-
-
 # Create EFS file system
 resource "aws_efs_file_system" "pimcore" {
   creation_token = "${var.fs_name}-${var.environment}"
