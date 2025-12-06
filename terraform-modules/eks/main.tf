@@ -66,7 +66,7 @@ module "eks" {
 
 # Install EKS add-ons (vpc-cni, coredns, cloudwatch observability)
 resource "aws_eks_addon" "vpc_cni" {
-  cluster_name = module.eks.cluster_id
+  cluster_name = module.eks.cluster_name
   addon_name   = "vpc-cni"
   tags = {
     Environment = "staging"
@@ -75,7 +75,7 @@ resource "aws_eks_addon" "vpc_cni" {
 }
 
 resource "aws_eks_addon" "coredns" {
-  cluster_name = module.eks.cluster_id
+  cluster_name = module.eks.cluster_name
   addon_name   = "coredns"
   tags = {
     Environment = "staging"
@@ -84,7 +84,7 @@ resource "aws_eks_addon" "coredns" {
 }
 
 resource "aws_eks_addon" "cloudwatch_obs" {
-  cluster_name = module.eks.cluster_id
+  cluster_name = module.eks.cluster_name
   addon_name   = "amazon-cloudwatch-observability"
   tags = {
     Environment = "staging"
