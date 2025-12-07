@@ -149,6 +149,7 @@ resource "aws_efs_mount_target" "mt" {
 }
 
 module "ebs-csi-driver" {
+  depends_on = [module.eks]
   source = "./ebs-csi-driver"
   cluster_name = module.eks.cluster_name
 }
