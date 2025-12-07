@@ -11,7 +11,7 @@ module "irsa_ebs_csi" {
   version = "5.39.0"
 
   create_role                   = true
-  role_name                     = "AmazonEKS‑EBS‑CSI‑Driver‑Role-${var.cluster_name}"
+  role_name                     = "EBS‑CSI‑Role-${var.cluster_name}"
   provider_url                  = replace(data.aws_eks_cluster.eks.identity[ 0 ].oidc[ 0 ].issuer ,"https://" ,"")
   role_policy_arns              = [ "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy" ]
   oidc_fully_qualified_subjects = [
