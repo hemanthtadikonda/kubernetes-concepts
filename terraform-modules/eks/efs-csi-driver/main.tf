@@ -14,7 +14,7 @@ module "irsa_efs_csi" {
   version = "5.39.0"
 
   create_role                   = true
-  role_name                     = "CSI-Role-${var.cluster_name}"
+  role_name                     = "CSI_Role_${var.cluster_name}"
   provider_url                  = replace(data.aws_eks_cluster.eks.identity[0].oidc[0].issuer, "https://", "")
   role_policy_arns              = [
     "arn:aws:iam::aws:policy/AmazonEFSCSIDriverPolicy"  # prefer this managed policy
