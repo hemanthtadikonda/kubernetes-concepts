@@ -6,7 +6,7 @@ variable "cluster_name" {
 }
 
 variable "project" {
-  default = "Hemanthmiro-Admin"
+  default = "Hemanthmiro_Admin"
 }
 variable "environment" {
   default = "staging"
