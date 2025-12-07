@@ -2,7 +2,7 @@ variable "region" {
   default = "us-east-1"
 }
 variable "cluster_name" {
-  default = "Hemanth-pim-cluster-staging"
+  default = "Hemanth_pim_cluster_staging"
 }
 
 variable "project" {
