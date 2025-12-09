@@ -26,6 +26,9 @@ module "tgw" {
 
   amazon_side_asn = 64512
 
+  share_tgw = false
+
+
   tags = {
     Environment = "prod"
   }
