@@ -25,8 +25,6 @@ module "tgw" {
   description = "Transit Gateway for im-core-prod"
 
   amazon_side_asn = 64512
-  default_route_table_association = true
-  default_route_table_propagation = true
 
   tags = {
     Environment = "prod"
