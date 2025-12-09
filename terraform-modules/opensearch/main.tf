@@ -1,3 +1,7 @@
+resource "aws_iam_service_linked_role" "es" {
+  aws_service_name = "opensearchservice.amazonaws.com"
+}
+
 resource "aws_opensearch_domain" "pimcore_global" {
   domain_name = var.domain_name
   engine_version = "OpenSearch_3.1" # choose appropriate version; adjust as needed
@@ -11,8 +15,8 @@ resource "aws_opensearch_domain" "pimcore_global" {
     }
 
     dedicated_master_enabled = true
-    dedicated_master_type    = "m5.large.search"
-    dedicated_master_count   = 3
+    dedicated_master_type    = "t3.small.search"
+    dedicated_master_count   = 1
   }
 
   ebs_options {
