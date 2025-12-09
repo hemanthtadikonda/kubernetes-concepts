@@ -36,16 +36,16 @@ resource "aws_opensearch_domain" "pimcore_global" {
   "Statement": [
     {
       "Effect": "Allow",
-      "Principal": { "AWS": "*" },
-      "Action": "es:*",
-      "Condition": {
-        "IpAddress": { "aws:SourceIp": "10.0.0.0/16" }
+      "Principal": {
+        "AWS": "*"
       },
+      "Action": "es:*",
       "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/${var.domain_name}/*"
     }
   ]
 }
 POLICY
+
 
   domain_endpoint_options {
     enforce_https = true
