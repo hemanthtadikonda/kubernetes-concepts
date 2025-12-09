@@ -32,18 +32,15 @@ module "tgw" {
     Environment = "prod"
   }
 }
-module "tgw_vpc_attachment" {
-  source  = "terraform-aws-modules/transit-gateway/aws//modules/tgw-vpc-attachment"
-  version = "2.9.0"
-
+resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attach" {
   transit_gateway_id = module.tgw.ec2_transit_gateway_id
   vpc_id             = module.vpc.vpc_id
-  subnet_ids         = module.vpc.private_subnets
+  subnet_ids         = module.vpc.private_subnets   # attachment always uses private subnets
 
-  appliance_mode_support = false
-  dns_support            = true
+  dns_support  = "enable"
+  ipv6_support = "disable"
 
   tags = {
-    Name = "im-core-prod-tgw-attachment"
+    Name = "prod-vpc-tgw-attach"
   }
 }
