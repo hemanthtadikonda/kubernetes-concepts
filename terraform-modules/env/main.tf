@@ -41,6 +41,6 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attach" {
   ipv6_support = "disable"
 
   tags = {
-    Name = "prod-vpc-tgw-attach"
+    Name = "prod-vpc-tgw-attach-01"
   }
 }
