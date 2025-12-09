@@ -1,7 +1,7 @@
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "im-core-prod-vpc"
+  name = "usaw-vpc-pim-prd-01"
   cidr = "10.0.0.0/16"
 
   azs             = ["us-east-1a" , "us-east-1b"]
@@ -21,7 +21,7 @@ module "tgw" {
   source  = "terraform-aws-modules/transit-gateway/aws"
   version = "2.9.0"
 
-  name        = "im-core-prod-tgw"
+  name        = "usaw-vpc-pim-prd-tgw"
   description = "Transit Gateway for im-core-prod"
 
   amazon_side_asn = 64512
