@@ -136,49 +136,39 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attach" {
 ########################################
 # MANUAL NAT Gateways (2) — only in the two chosen public subnets (indices 4 & 5)
 ########################################
-
-# Create 2 Elastic IPs (one per NAT)
+# Create 2 EIPs for NAT Gateways
 resource "aws_eip" "nat" {
-  count = 2
+  count  = 2
+  domain = "vpc"
+
   tags = {
     Name = "nat-eip-${count.index}"
   }
 }
 
-# Create 2 NAT Gateways in the public subnets we picked.
-# We select the subnet ids using the same order as `module.vpc.public_subnets`.
-# Indices: 4 and 5 correspond to "10.105.83.0/27" and "10.105.83.32/27".
+# Create 2 NAT Gateways in the public subnets you choose
+# Suppose you want NATs in public_subnets indices 0 and 1
 resource "aws_nat_gateway" "this" {
   count = 2
 
   allocation_id = aws_eip.nat[count.index].id
-
-  # Map count.index 0 -> public_subnet index 4
-  #              1 -> public_subnet index 5
-  subnet_id = element(module.vpc.public_subnets, count.index)
+  subnet_id     = element(module.vpc.public_subnets, count.index)  # use 0 and 1
 
   tags = {
     Name = "manual-nat-${count.index}"
   }
 
-  depends_on = [module.vpc]  # ensure subnets exist first
+  depends_on = [module.vpc]
 }
 
-########################################
-# Add routes for private route tables to use the NATs (1 NAT per private RT)
-########################################
-
-# For each private route table (one per private subnet/AZ) create a 0.0.0.0/0 route to the NAT in the same index (AZ)
+# Route private subnets to NATs
 resource "aws_route" "private_to_nat" {
-  count = length(module.vpc.private_route_table_ids)
+  count = length(module.vpc.private_subnets)
 
   route_table_id         = element(module.vpc.private_route_table_ids, count.index)
   destination_cidr_block = "0.0.0.0/0"
 
-  # Use the NAT gateway created in the corresponding AZ (count.index -> nat index)
-  # We created NATs at indices [4,5] of public_subnets but aws_nat_gateway.this[*].id list is 0..1 (AZ order)
-  # We assumed private subnets list order matches NATs order (module maps lists to AZs consistently).
-  nat_gateway_id = aws_nat_gateway.this[count.index].id
-
-  depends_on = [aws_nat_gateway.this]
+  # Map private subnets to NATs in a round-robin way (modulo)
+  nat_gateway_id = aws_nat_gateway.this[count.index % length(aws_nat_gateway.this)].id
 }
+
