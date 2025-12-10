@@ -139,9 +139,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attach" {
 
 # Create 2 Elastic IPs (one per NAT)
 resource "aws_eip" "nat" {
-  depends_on = [module.vpc]
   count = 2
-  vpc   = true
   tags = {
     Name = "nat-eip-${count.index}"
   }
