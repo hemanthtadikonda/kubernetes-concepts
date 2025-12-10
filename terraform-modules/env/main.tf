@@ -2,11 +2,14 @@ module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
   name = "usaw-vpc-pim-prd-01"
-  cidr = "10.0.0.0/16"
+  cidr = "10.105.82.0/23"
+  secondary_cidr_blocks = [
+    "100.66.0.0/21"         # Secondary CIDR
+  ]
 
   azs             = ["us-east-1a" , "us-east-1b"]
-  private_subnets = ["10.0.1.0/24" , "10.0.2.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+  private_subnets = ["100.66.0.0/22", "100.66.4.0/22"]
+  public_subnets  = ["10.105.82.0/25","10.105.82.128/25","10.105.83.64/27","10.105.83.96/27","10.105.83.0/27","10.105.83.32/27"]
 
   enable_nat_gateway = true
   enable_vpn_gateway = false
@@ -24,7 +27,7 @@ module "tgw" {
   name        = "usaw-vpc-pim-prd-tgw"
   description = "Transit Gateway for im-core-prod"
 
-  amazon_side_asn = 64512
+  amazon_side_asn = 65000
 
   share_tgw = false
 
