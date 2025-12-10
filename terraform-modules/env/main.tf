@@ -155,7 +155,7 @@ resource "aws_nat_gateway" "this" {
 
   # Map count.index 0 -> public_subnet index 4
   #              1 -> public_subnet index 5
-  subnet_id = element(module.vpc.public_subnets, 4 + count.index)
+  subnet_id = element(module.vpc.public_subnets, count.index)
 
   tags = {
     Name = "manual-nat-${count.index}"
