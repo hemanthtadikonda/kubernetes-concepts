@@ -1,105 +1,25 @@
-module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
-
-  name = "usaw-vpc-pim-prd-01"
-  cidr = "10.105.82.0/23"
-  secondary_cidr_blocks = [
-    "100.66.0.0/21"         # Secondary CIDR
-  ]
-
-  azs             = ["us-east-1a" , "us-east-1b"]
-  private_subnets = ["100.66.0.0/22", "100.66.4.0/22"]
-  public_subnets  = ["10.105.82.0/25","10.105.82.128/25","10.105.83.64/27","10.105.83.96/27","10.105.83.0/27","10.105.83.32/27"]
-
-  enable_nat_gateway = true
-  enable_vpn_gateway = false
-
-  tags = {
-    Terraform   = "true"
-    Environment = "dev"
-  }
-}
-
-module "tgw" {
-  source  = "terraform-aws-modules/transit-gateway/aws"
-  version = "2.9.0"
-
-  name        = "usaw-vpc-pim-prd-tgw"
-  description = "Transit Gateway for im-core-prod"
-
-  amazon_side_asn = 65000
-
-  share_tgw = false
-
-
-  tags = {
-    Environment = "prod"
-  }
-}
-resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attach" {
-  transit_gateway_id = module.tgw.ec2_transit_gateway_id
-  vpc_id             = module.vpc.vpc_id
-  subnet_ids         = module.vpc.private_subnets   # attachment always uses private subnets
-
-  dns_support  = "enable"
-  ipv6_support = "disable"
-
-  tags = {
-    Name = "prod-vpc-tgw-attach-01"
-  }
-}
-
-
-
-provider "aws" {
-  region = "us-east-1"
-}
-#
-#############################
-## VPC module: create 6 public subnets
-## but disable automatic NAT creation
-#############################
 #module "vpc" {
 #  source = "terraform-aws-modules/vpc/aws"
-#  version = ">= 2.77.0"
 #
 #  name = "usaw-vpc-pim-prd-01"
 #  cidr = "10.105.82.0/23"
-#
 #  secondary_cidr_blocks = [
-#    "100.66.0.0/21"
+#    "100.66.0.0/21"         # Secondary CIDR
 #  ]
 #
-#  azs = ["us-east-1a", "us-east-1b"]
+#  azs             = ["us-east-1a" , "us-east-1b"]
+#  private_subnets = ["100.66.0.0/22", "100.66.4.0/22"]
+#  public_subnets  = ["10.105.82.0/25","10.105.82.128/25","10.105.83.64/27","10.105.83.96/27","10.105.83.0/27","10.105.83.32/27"]
 #
-#  private_subnets = [
-#    "100.66.0.0/22",   # AZ: us-east-1a
-#    "100.66.4.0/22"    # AZ: us-east-1b
-#  ]
-#
-#  # KEEP all 6 public subnets — module will create them in round-robin across AZs
-#  public_subnets = [
-#    "10.105.82.0/25",     # index 0 -> AZ1
-#    "10.105.82.128/25",   # index 1 -> AZ2
-#    "10.105.83.64/27",    # index 2 -> AZ1
-#    "10.105.83.96/27",    # index 3 -> AZ2
-#    "10.105.83.0/27",     # index 4 -> AZ1  <<< we want NAT here
-#    "10.105.83.32/27"     # index 5 -> AZ2  <<< and NAT here
-#  ]
-#
-#  # Disable module-created NAT Gateways so we can create NATs manually where we want
-#  enable_nat_gateway = false
+#  enable_nat_gateway = true
 #  enable_vpn_gateway = false
 #
 #  tags = {
 #    Terraform   = "true"
-#    Environment = "prod"
+#    Environment = "dev"
 #  }
 #}
 #
-#########################################
-## Transit Gateway module
-#########################################
 #module "tgw" {
 #  source  = "terraform-aws-modules/transit-gateway/aws"
 #  version = "2.9.0"
@@ -108,14 +28,94 @@ provider "aws" {
 #  description = "Transit Gateway for im-core-prod"
 #
 #  amazon_side_asn = 65000
-#  share_tgw       = false
+#
+#  share_tgw = false
+#
 #
 #  tags = {
 #    Environment = "prod"
 #  }
 #}
+#resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attach" {
+#  transit_gateway_id = module.tgw.ec2_transit_gateway_id
+#  vpc_id             = module.vpc.vpc_id
+#  subnet_ids         = module.vpc.private_subnets   # attachment always uses private subnets
+#
+#  dns_support  = "enable"
+#  ipv6_support = "disable"
+#
+#  tags = {
+#    Name = "prod-vpc-tgw-attach-01"
+#  }
+#}
+#
+#
+#
+#provider "aws" {
+#  region = "us-east-1"
+#}
+##
+#############################
+## VPC module: create 6 public subnets
+## but disable automatic NAT creation
+############################
+module "vpc" {
+  source = "terraform-aws-modules/vpc/aws"
+  version = ">= 2.77.0"
+
+  name = "usaw-vpc-pim-prd-01"
+  cidr = "10.105.82.0/23"
+
+  secondary_cidr_blocks = [
+    "100.66.0.0/21"
+  ]
+
+  azs = ["us-east-1a", "us-east-1b"]
+
+  private_subnets = [
+    "100.66.0.0/22",   # AZ: us-east-1a
+    "100.66.4.0/22"    # AZ: us-east-1b
+  ]
+
+  # KEEP all 6 public subnets — module will create them in round-robin across AZs
+  public_subnets = [
+    "10.105.82.0/25",     # index 0 -> AZ1
+    "10.105.82.128/25",   # index 1 -> AZ2
+    "10.105.83.64/27",    # index 2 -> AZ1
+    "10.105.83.96/27",    # index 3 -> AZ2
+    "10.105.83.0/27",     # index 4 -> AZ1  <<< we want NAT here
+    "10.105.83.32/27"     # index 5 -> AZ2  <<< and NAT here
+  ]
+
+  # Disable module-created NAT Gateways so we can create NATs manually where we want
+  enable_nat_gateway = false
+  enable_vpn_gateway = false
+
+  tags = {
+    Terraform   = "true"
+    Environment = "prod"
+  }
+}
 
 ########################################
+# Transit Gateway module
+########################################
+module "tgw" {
+  source  = "terraform-aws-modules/transit-gateway/aws"
+  version = "2.9.0"
+
+  name        = "usaw-vpc-pim-prd-tgw"
+  description = "Transit Gateway for im-core-prod"
+
+  amazon_side_asn = 65000
+  share_tgw       = false
+
+  tags = {
+    Environment = "prod"
+  }
+}
+
+#########################################
 # TGW VPC Attachment (private subnets only)
 ########################################
 resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attach" {
