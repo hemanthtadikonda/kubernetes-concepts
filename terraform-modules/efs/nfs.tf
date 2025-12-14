@@ -49,9 +49,9 @@ resource "aws_security_group" "efs_sg" {
 }
 
 resource "aws_efs_mount_target" "mt" {
-  count           = length(data.aws_subnet_ids.private_subnets.ids)
+  count           = length(data.aws_subnets.private_subnets.ids)
   file_system_id  = aws_efs_file_system.helix_efs.id
-  subnet_id       = data.aws_subnet_ids.private_subnets.ids[count.index]
+  subnet_id       = data.aws_subnets.private_subnets.ids[count.index]
   security_groups = [aws_security_group.efs_sg.id]
 }
 
