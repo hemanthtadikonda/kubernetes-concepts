@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "tad-state"
-    key    = "eks/terraform.tfstate"
+    key    = "helix/dev/terraform.tfstate"
     region = "us-east-1"
   }
 }
