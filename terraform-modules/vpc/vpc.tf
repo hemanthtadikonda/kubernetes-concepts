@@ -18,51 +18,26 @@ module "vpc" {
   }
 }
 
-module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.0"
+module "tgw" {
+  source  = "terraform-aws-modules/transit-gateway/aws"
+  version = ">= 3.0.2"
 
-  name = "my-vpc"
-  cidr = "10.0.0.0/16"
+  name        = "helix-dev-tgw"
+  description = "TGW shared with several other AWS accounts"
 
-  azs = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+  enable_auto_accept_shared_attachments = true
 
-  # Public subnets (ALB, NAT Gateway, Bastion)
-  public_subnets = [
-    "10.0.101.0/24",
-    "10.0.102.0/24",
-    "10.0.103.0/24"
-  ]
-
-  # Application subnets (EKS nodes, EC2 apps)
-  private_subnets = [
-    "10.0.1.0/24",
-    "10.0.2.0/24",
-    "10.0.3.0/24"
-  ]
-
-  # Database subnets (RDS, Aurora)
-  database_subnets = [
-    "10.0.11.0/24",
-    "10.0.12.0/24",
-    "10.0.13.0/24"
-  ]
-
-  # NAT Gateway for private/app subnets
-  enable_nat_gateway = true
-  single_nat_gateway = false
-  one_nat_gateway_per_az = true
-
-  # DB subnet group & routing
-  create_database_subnet_group = true
-  create_database_subnet_route_table = true
-
-  # Optional but recommended
-  enable_dns_hostnames = true
-  enable_dns_support   = true
-
+  amazon_side_asn = 65000
+  vpc_attachments = {
+    vpc = {
+      vpc_id       = module.vpc.vpc_id
+      subnet_ids   = module.vpc.private_subnets
+      dns_support  = true
+      ipv6_support = true
+    }
+  }
   tags = {
-    Terraform   = "true"
-    Environment = "dev"
+    Project   = "helix-dev"
+    Name      = "helix-dev-vpc-tgw-attach-01"
   }
 }
