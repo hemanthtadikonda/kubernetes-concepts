@@ -19,26 +19,26 @@ module "vpc" {
   }
 }
 
-module "tgw" {
-  source  = "terraform-aws-modules/transit-gateway/aws"
-  version = ">= 3.0.2"
-
-  name        = "helix-dev-tgw"
-  description = "TGW shared with several other AWS accounts"
-
-  enable_auto_accept_shared_attachments = true
-
-  amazon_side_asn = 65000
-  vpc_attachments = {
-    vpc = {
-      vpc_id       = module.vpc.vpc_id
-      subnet_ids   = module.vpc.private_subnets
-      dns_support  = true
-      ipv6_support = false
-    }
-  }
-  tags = {
-    Project   = "helix-dev"
-    Name      = "helix-dev-vpc-tgw-attach-01"
-  }
-}
+#module "tgw" {
+#  source  = "terraform-aws-modules/transit-gateway/aws"
+#  version = ">= 3.0.2"
+#
+#  name        = "helix-dev-tgw"
+#  description = "TGW shared with several other AWS accounts"
+#
+#  enable_auto_accept_shared_attachments = true
+#
+#  amazon_side_asn = 65000
+#  vpc_attachments = {
+#    vpc = {
+#      vpc_id       = module.vpc.vpc_id
+#      subnet_ids   = module.vpc.private_subnets
+#      dns_support  = true
+#      ipv6_support = false
+#    }
+#  }
+#  tags = {
+#    Project   = "helix-dev"
+#    Name      = "helix-dev-vpc-tgw-attach-01"
+#  }
+#}
