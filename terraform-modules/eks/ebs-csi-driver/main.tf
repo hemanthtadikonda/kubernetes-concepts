@@ -33,7 +33,8 @@ resource "aws_eks_addon" "ebs_csi" {
 
   # Optionally: specify a version compatible with your cluster.
   # addon_version = "v1.19.0-eksbuild.1"
-
+  // aws eks describe-addon-versions --addon-name amazon-cloudwatch-observability --kubernetes-version 1.33
+  # aws eks describe-addon-versions --addon-name aws-ebs-csi-driver --kubernetes-version 1.30
   tags = {
     "eks_addon" = "ebs-csi"
     "managed"   = "terraform"
