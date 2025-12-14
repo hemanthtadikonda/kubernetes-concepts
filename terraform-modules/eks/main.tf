@@ -8,11 +8,13 @@ module "vpc" {
   name = "${var.cluster_name}-vpc"
   cidr = "10.0.0.0/16"
 
-  azs             = ["us-east-1a" , "us-east-1b" ]
-  private_subnets = ["10.0.1.0/24" ,"10.0.2.0/24" ]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+  azs              = ["us-east-1a" , "us-east-1b" ]
+  private_subnets  = ["10.0.2.0/24" ,"10.0.3.0/24" ]
+  public_subnets   = ["10.0.0.0/24", "10.0.1.0/24"]
+  database_subnets =  ["10.0.4.0/24", "10.0.5.0/24" ]
 
   enable_nat_gateway = true
+  one_nat_gateway_per_az = true
   enable_vpn_gateway = true
 
   tags = {
@@ -77,6 +79,8 @@ resource "aws_eks_addon" "vpc_cni" {
 resource "aws_eks_addon" "coredns" {
   cluster_name = module.eks.cluster_name
   addon_name   = "coredns"
+  addon_version               = "v1.11.4-eksbuild.24"
+  resolve_conflicts_on_update = "PRESERVE"
   tags = {
     Environment = "staging"
     Terraform   = "true"
