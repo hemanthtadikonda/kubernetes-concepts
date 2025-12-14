@@ -11,7 +11,7 @@ resource "aws_efs_file_system" "helix_efs" {
     Terraform   = "true"
   }
 }
-resource "aws_efs_access_point" "pimcore_ap" {
+resource "aws_efs_access_point" "helix_ap" {
   file_system_id = aws_efs_file_system.helix_efs.id
 
   posix_user {
