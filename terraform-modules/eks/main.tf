@@ -125,7 +125,7 @@ resource "aws_security_group" "efs_sg" {
     from_port       = 2049
     to_port         = 2049
     protocol        = "tcp"
-    security_groups = module.vpc.private_subnets_cidrs      # Pass this value
+    security_groups = module.vpc.private_subnets_cidr_blocks     # Pass this value
   }
 
   # Allow all outbound (default best practice)
