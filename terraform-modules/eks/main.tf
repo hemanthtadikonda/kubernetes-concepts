@@ -108,7 +108,6 @@ resource "aws_efs_file_system" "pimcore" {
   }
 }
 
-
 # Security Group for EFS
 resource "aws_security_group" "efs_sg" {
   name        = "${var.fs_name}-${var.environment}-efs-sg"
@@ -159,5 +158,3 @@ module "efs-csi-driver" {
   source = "./efs-csi-driver"
   cluster_name = module.eks.cluster_name
 }
-
-

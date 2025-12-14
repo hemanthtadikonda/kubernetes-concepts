@@ -13,14 +13,14 @@ provider "aws" {
 
 resource "aws_ecr_repository" "example" {
   for_each = toest([
-    "Hemanth-talent-dev",
-    "Hemanth-talent-prod" ,
+    "helix-fronted",
+    "helix-backend",
   ])
   name                 = each.key
   image_tag_mutability = "IMMUTABLE"
   tags = {
     ManagedBy = "terraform"
-    Project   = "Hemanthmiro-Admin"
+    Project   = "helix"
     Env       = var.environment
   }
 
