@@ -28,7 +28,7 @@ module "eks" {
   version = "~> 21.0"
 
   name               = var.cluster_name
-  kubernetes_version = "1.30"
+  kubernetes_version = "1.33"
 
   # Optional
   endpoint_public_access = true
@@ -68,8 +68,9 @@ module "eks" {
 
 # Install EKS add-ons (vpc-cni, coredns, cloudwatch observability)
 resource "aws_eks_addon" "vpc_cni" {
-  cluster_name = module.eks.cluster_name
-  addon_name   = "vpc-cni"
+  cluster_name  = module.eks.cluster_name
+  addon_name    = "vpc-cni"
+  addon_version = "v1.20.0-eksbuild.1"
   tags = {
     Environment = "staging"
     Terraform   = "true"
@@ -79,7 +80,7 @@ resource "aws_eks_addon" "vpc_cni" {
 resource "aws_eks_addon" "coredns" {
   cluster_name = module.eks.cluster_name
   addon_name   = "coredns"
-  addon_version               = "v1.11.4-eksbuild.24"
+  addon_version               = "v1.12.2-eksbuild.4"
   resolve_conflicts_on_update = "PRESERVE"
   tags = {
     Environment = "staging"

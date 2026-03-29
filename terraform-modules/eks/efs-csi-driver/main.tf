@@ -36,7 +36,7 @@ resource "aws_eks_addon" "efs_csi" {
   resolve_conflicts_on_update = "PRESERVE"
 
   # optional: pin the addon version once tested in staging
-  # addon_version = "v1.xx.x-eksbuild.y"
+  addon_version = "v2.0.4-eksbuild.1"
 
   tags = {
     eks_addon = "efs-csi"
